@@ -1,4 +1,4 @@
-const API_KEY = "YOUR_OPENAI_API_KEY"; // Replace with your key
+const API_KEY = "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"; // Replace with your key
 
 let brainChart, stream, spoons = 10;
 let userProfile = JSON.parse(localStorage.getItem('steadyProfile')) || {
