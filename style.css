@@ -2,22 +2,24 @@
 body { font-family: 'Inter', sans-serif; cursor: crosshair; }
 .serif { font-family: 'Playfair Display', serif; }
 
-.auth-card, .tool-card { background: rgba(26, 26, 26, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(197, 160, 89, 0.1); }
-.ledger-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(197, 160, 89, 0.2); padding: 1rem 0; outline: none; transition: 0.5s; color: var(--parchment); }
+/* LAYOUTS */
+.auth-card, .tool-card { background: rgba(26, 26, 26, 0.8); backdrop-filter: blur(15px); }
+.ledger-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(197, 160, 89, 0.1); padding: 1rem 0; outline: none; transition: 0.5s; color: var(--parchment); }
 .ledger-input:focus { border-bottom-color: var(--gold); }
 
-.btn-elegant { background: var(--gold); color: var(--ink); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; padding: 1.25rem; border: none; cursor: pointer; transition: 0.5s; }
-.btn-elegant:hover { background: var(--parchment); transform: translateY(-3px); }
+/* BUTTONS */
+.btn-elegant { background: var(--gold); color: var(--ink); font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; padding: 1.25rem; border: none; cursor: pointer; transition: 0.5s; }
+.btn-elegant:hover { background: var(--parchment); transform: translateY(-2px); }
 
-/* Range Slider Styles */
+/* SLIDERS */
 input[type=range] { -webkit-appearance: none; background: rgba(197, 160, 89, 0.1); height: 1px; width: 100%; }
-input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 30px; background: var(--gold); cursor: pointer; border-radius: 0; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 25px; background: var(--gold); cursor: pointer; border-radius: 0; }
 
-/* Adaptive Theme Classes */
-body.mode-calm { background-color: #EFEBE0 !important; color: #2C3333 !important; }
-body.mode-calm .auth-card, body.mode-calm .tool-card { background: #fff !important; color: #2C3333 !important; }
-body.mode-calm .ledger-input { color: #2C3333; border-bottom-color: rgba(0,0,0,0.1); }
-body.mode-calm .btn-elegant { background: #2C3333; color: #EFEBE0; }
+/* CALM MODE */
+body.mode-calm { background-color: #EFEBE0 !important; color: #1B2621 !important; }
+body.mode-calm .auth-card, body.mode-calm .tool-card { background: #fff !important; color: #1B2621 !important; }
+body.mode-calm .ledger-input { color: #1B2621; border-bottom-color: rgba(0,0,0,0.1); }
+body.mode-calm .btn-elegant { background: #1B2621; color: #EFEBE0; }
 
-@keyframes pulse-red { 0% { border-color: var(--gold); } 50% { border-color: #ff4d4d; } 100% { border-color: var(--gold); } }
-.warning-pulse { animation: pulse-red 2s infinite; }
+@keyframes nudge-alert { 0%, 100% { border-color: rgba(197, 160, 89, 0.1); } 50% { border-color: #ff4d4d; border-width: 2px; } }
+.warning-pulse { animation: nudge-alert 2s infinite; }
