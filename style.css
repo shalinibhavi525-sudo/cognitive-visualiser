@@ -1,25 +1,169 @@
-:root { --gold: #C5A059; --ink: #0c0c0c; --parchment: #F5F2E7; }
-body { font-family: 'Inter', sans-serif; cursor: crosshair; }
-.serif { font-family: 'Playfair Display', serif; }
+/* --- THE SCHOLAR'S PALETTE --- */
+:root {
+    --gold: #C5A059;       /* Aged Brass */
+    --gold-dim: rgba(197, 160, 89, 0.2);
+    --ink: #0c0c0c;        /* Deep Fountain Pen Ink */
+    --parchment: #F5F2E7;  /* Aged Paper */
+    --glass: rgba(20, 20, 20, 0.7);
+}
 
-/* LAYOUTS */
-.auth-card, .tool-card { background: rgba(26, 26, 26, 0.8); backdrop-filter: blur(15px); }
-.ledger-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(197, 160, 89, 0.1); padding: 1rem 0; outline: none; transition: 0.5s; color: var(--parchment); }
-.ledger-input:focus { border-bottom-color: var(--gold); }
+/* --- FOUNDATION --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-/* BUTTONS */
-.btn-elegant { background: var(--gold); color: var(--ink); font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; padding: 1.25rem; border: none; cursor: pointer; transition: 0.5s; }
-.btn-elegant:hover { background: var(--parchment); transform: translateY(-2px); }
+body {
+    background-color: var(--ink);
+    color: var(--parchment);
+    font-family: 'Inter', sans-serif;
+    transition: background-color 1s ease, color 1s ease;
+    overflow-x: hidden;
+    cursor: crosshair; /* Precision for the scholar */
+}
 
-/* SLIDERS */
-input[type=range] { -webkit-appearance: none; background: rgba(197, 160, 89, 0.1); height: 1px; width: 100%; }
-input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 25px; background: var(--gold); cursor: pointer; border-radius: 0; }
+.serif {
+    font-family: 'Playfair Display', serif;
+}
 
-/* CALM MODE */
-body.mode-calm { background-color: #EFEBE0 !important; color: #1B2621 !important; }
-body.mode-calm .auth-card, body.mode-calm .tool-card { background: #fff !important; color: #1B2621 !important; }
-body.mode-calm .ledger-input { color: #1B2621; border-bottom-color: rgba(0,0,0,0.1); }
-body.mode-calm .btn-elegant { background: #1B2621; color: #EFEBE0; }
+/* Texture Overlay (Makes the site feel like leather/paper) */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 99;
+}
 
-@keyframes nudge-alert { 0%, 100% { border-color: rgba(197, 160, 89, 0.1); } 50% { border-color: #ff4d4d; border-width: 2px; } }
-.warning-pulse { animation: nudge-alert 2s infinite; }
+/* --- THE REGISTRY (LOGIN) --- */
+.auth-card {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+    border-radius: 2px;
+}
+
+/* --- THE LEDGER (TASKS) --- */
+.ledger-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--gold-dim);
+    padding: 0.75rem 0;
+    outline: none;
+    transition: border-color 0.4s;
+    color: var(--parchment);
+}
+
+.ledger-input:focus {
+    border-bottom-color: var(--gold);
+}
+
+::placeholder {
+    color: var(--gold);
+    opacity: 0.3;
+    font-style: italic;
+}
+
+/* --- BUTTONS --- */
+.btn-elegant {
+    background: var(--gold);
+    color: var(--ink);
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    padding: 1.25rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.btn-elegant:hover {
+    background: var(--parchment);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+}
+
+/* --- CUSTOM RANGE SLIDERS --- */
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: rgba(197, 160, 89, 0.1);
+    height: 1px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 12px;
+    width: 25px;
+    background: var(--gold);
+    border: 1px solid var(--ink);
+    cursor: pointer;
+    border-radius: 0;
+}
+
+/* --- CAMERA LENS --- */
+#webcam {
+    filter: sepia(0.3) contrast(1.1) brightness(0.8);
+    transform: scaleX(-1); /* Mirror effect */
+}
+
+/* --- SENSORY ADAPTATION (MODE: CALM) --- */
+body.mode-calm {
+    background-color: #EFEBE0 !important;
+    color: #1B2621 !important;
+}
+
+body.mode-calm .auth-card, 
+body.mode-calm .tool-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    color: #1B2621 !important;
+}
+
+body.mode-calm .ledger-input {
+    color: #1B2621;
+    border-bottom-color: rgba(0,0,0,0.1);
+}
+
+body.mode-calm .btn-elegant {
+    background: #1B2621;
+    color: #EFEBE0;
+}
+
+body.mode-calm .serif {
+    color: #1a1a1a;
+}
+
+/* --- OBSERVABILITY: THE WARNING PULSE --- */
+@keyframes nudge-alert {
+    0%, 100% { border-color: rgba(197, 160, 89, 0.1); }
+    50% { border-color: #ff4d4d; border-width: 2px; }
+}
+
+.warning-pulse {
+    animation: nudge-alert 2s infinite;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade {
+    animation: fadeInUp 0.7s ease-out forwards;
+}
+
+/* Utilities */
+.hidden {
+    display: none !important;
+}
