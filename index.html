@@ -2,310 +2,226 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Cognitive Manuscript | CAF v2.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Inter:wght@300;400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <title>The Scholar's Ledger | Executive Suite v4.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,600&family=JetBrains+Mono:wght@300&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --paper: #fcfaf2;
-            --oxford-blue: #14213d;
-            --crimson: #7b0d1e;
-            --gold: #b8860b;
-            --ink: #1a1a1a;
-            --sepia: #d1cfb7;
-            --shadow: rgba(20, 33, 61, 0.15);
+            --parchment: #f2eee3;
+            --ink: #1a1a1b;
+            --wine: #5e1a1e;
+            --gold: #c5a059;
+            --slate: #4a4e69;
+            --forest: #2d3a3a;
         }
 
         body {
-            background-color: var(--paper);
+            background: #d6d1c0;
             color: var(--ink);
             font-family: 'EB Garamond', serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
+            margin: 0; padding: 40px;
+            background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
         }
 
-        header {
-            width: 100%;
-            padding: 60px 0 30px 0;
-            text-align: center;
-            border-bottom: 3px double var(--sepia);
-            margin-bottom: 40px;
-        }
-
-        h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin: 0; font-weight: 700; color: var(--oxford-blue); }
-        .tagline { font-family: 'Playfair Display', serif; font-style: italic; color: var(--crimson); font-size: 1.2rem; }
-
-        .layout {
-            max-width: 1200px;
-            width: 95%;
+        .master-grid {
+            max-width: 1400px;
+            margin: 0 auto;
             display: grid;
-            grid-template-columns: 380px 1fr;
-            gap: 40px;
-            margin-bottom: 100px;
+            grid-template-columns: 380px 1fr 380px;
+            gap: 25px;
         }
 
-        /* Panels */
-        .card {
-            background: white;
-            border: 1px solid var(--sepia);
-            padding: 30px;
-            box-shadow: 12px 12px 0px var(--shadow);
+        header { grid-column: span 3; text-align: center; border-bottom: 5px double var(--ink); padding-bottom: 20px; margin-bottom: 30px; }
+        h1 { font-family: 'Playfair Display'; font-size: 3rem; margin: 0; color: var(--wine); letter-spacing: -1px; }
+
+        .manuscript {
+            background: var(--parchment);
+            border: 1px solid #c4bfad;
+            padding: 25px;
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.1);
             position: relative;
         }
 
-        .card::before {
-            content: "";
-            position: absolute;
-            top: 5px; left: 5px; right: 5px; bottom: 5px;
-            border: 1px solid var(--sepia);
-            pointer-events: none;
-        }
+        h3 { font-family: 'Playfair Display'; font-variant: small-caps; border-bottom: 1px solid var(--gold); padding-bottom: 8px; color: var(--wine); }
 
-        h3 { font-family: 'Playfair Display', serif; color: var(--oxford-blue); border-bottom: 2px solid var(--gold); padding-bottom: 5px; margin-bottom: 20px; }
+        /* The Glitch Effect (Overload Simulation) */
+        .overload-active { animation: shake 0.5s infinite; filter: blur(0.5px); }
+        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -1px); } 100% { transform: translate(0,0); } }
 
-        /* Sliders */
-        .slider-group { margin-bottom: 20px; }
-        .slider-group label { display: block; font-weight: 600; font-size: 1rem; margin-bottom: 8px; font-family: 'Inter', sans-serif; color: var(--oxford-blue); }
-        input[type=range] { width: 100%; accent-color: var(--gold); cursor: pointer; }
+        /* Input Styles */
+        .input-group { margin-bottom: 15px; }
+        label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--slate); font-weight: bold; }
+        input[type=range] { width: 100%; accent-color: var(--wine); }
 
-        /* Chart Area */
-        .chart-container { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-
-        /* Task & Manifesto Area */
-        .full-width { grid-column: span 2; }
-        
-        .manifesto-output {
-            background: white;
-            border: 2px solid var(--oxford-blue);
-            padding: 50px;
-            line-height: 1.8;
-            font-size: 1.1rem;
-            position: relative;
-        }
-
-        .manifesto-output h2 { font-family: 'Playfair Display', serif; text-align: center; color: var(--crimson); text-decoration: underline; margin-bottom: 30px; }
-
-        /* Complex Tasks */
-        .task-controls { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
-        input[type=text], select { 
-            padding: 12px; border: 1px solid var(--sepia); font-family: 'Inter'; font-size: 0.9rem;
-            background: #fff;
-        }
-        
-        .btn {
-            background: var(--oxford-blue); color: var(--paper); border: none; padding: 12px 25px;
-            font-family: 'Playfair Display'; font-weight: bold; cursor: pointer; transition: 0.3s;
-        }
-        .btn:hover { background: var(--crimson); }
-
-        .task-item {
-            border-bottom: 1px solid var(--sepia);
-            padding: 20px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .energy-tag { padding: 3px 8px; border-radius: 3px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; color: white; }
-        .energy-high { background: var(--crimson); }
-        .energy-low { background: #2a9d8f; }
-
-        .shame-free-dialog {
-            background: #fffdf2;
-            border-left: 4px solid var(--gold);
+        /* Buffer Console (The Brain Dump) */
+        .console {
+            background: #111;
+            color: #00ffaa;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
             padding: 15px;
-            margin-top: 15px;
-            font-style: italic;
-            color: var(--ink);
+            height: 150px;
+            overflow-y: auto;
+            border-radius: 4px;
         }
 
-        @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
+        /* Tasks */
+        .task-item { border-bottom: 1px dashed var(--sepia); padding: 15px 0; font-size: 0.95rem; }
+        .tag { font-size: 0.6rem; padding: 2px 5px; border: 1px solid var(--wine); margin-right: 5px; font-weight: bold; }
 
-        @media print {
-            .slider-group, .task-controls, .btn, header { display: none; }
-            .manifesto-output { border: none; box-shadow: none; }
-            body { background: white; }
+        .btn-gold {
+            background: var(--ink); color: var(--gold); border: 1px solid var(--gold);
+            padding: 10px; cursor: pointer; font-family: 'Playfair Display'; width: 100%; margin-top: 10px;
         }
+        .btn-gold:hover { background: var(--wine); color: white; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>The Cognitive Manuscript</h1>
-    <div class="tagline">An Archetypal Mapping of the Spiky Profile — v2.0</div>
+    <h1>The Scholar’s Ledger</h1>
+    <div style="font-style: italic; color: var(--slate);">Formal Instrumentation of the Non-Linear Mind | v4.0</div>
 </header>
 
-<div class="layout">
-    <!-- LEFT: THE ARCHITECTURE -->
-    <div class="card">
-        <div class="control-section">
-            <h3>Intellectual Spikes</h3>
-            <div class="slider-group"><label>Pattern Synthesis</label><input type="range" min="1" max="10" value="9" id="s1"></div>
-            <div class="slider-group"><label>Hyperfocus Depth</label><input type="range" min="1" max="10" value="8" id="s2"></div>
-            <div class="slider-group"><label>Divergent Creativity</label><input type="range" min="1" max="10" value="7" id="s3"></div>
-            <div class="slider-group"><label>Working Memory</label><input type="range" min="1" max="10" value="4" id="s4"></div>
-        </div>
+<div class="master-grid" id="mainWrapper">
+    
+    <!-- COL 1: COGNITIVE STATE -->
+    <div class="manuscript">
+        <h3>Architecture State</h3>
+        <div class="input-group"><label>Pattern Synthesis</label><input type="range" id="s1" min="1" max="10" value="9"></div>
+        <div class="input-group"><label>Sensory Load</label><input type="range" id="s2" min="1" max="10" value="3"></div>
+        <div class="input-group"><label>Energy Spoons</label><input type="range" id="s3" min="1" max="10" value="8"></div>
+        
+        <canvas id="radarChart" style="margin-top: 20px;"></canvas>
 
-        <div class="control-section">
-            <h3>Friction Valleys</h3>
-            <div class="slider-group"><label>Task Initiation</label><input type="range" min="1" max="10" value="3" id="f1"></div>
-            <div class="slider-group"><label>Context Switching</label><input type="range" min="1" max="10" value="4" id="f2"></div>
-            <div class="slider-group"><label>Sensory Regulation</label><input type="range" min="1" max="10" value="4" id="f3"></div>
-            <div class="slider-group"><label>Social Calibration</label><input type="range" min="1" max="10" value="5" id="f4"></div>
-        </div>
+        <h3>Environment Hardening</h3>
+        <p style="font-size: 0.8rem;">Generate a .json configuration to harden your IDE based on current Sensory Load.</p>
+        <button class="btn-gold" onclick="generateConfig()">EXPORT HARDENING SCRIPT</button>
     </div>
 
-    <!-- RIGHT: THE SCIENTIFIC MAP -->
-    <div class="card chart-container">
-        <canvas id="spikeMap"></canvas>
-        <button class="btn" style="margin-top: 20px;" onclick="window.print()">Archive This Manuscript (PDF)</button>
-    </div>
-
-    <!-- MANIFESTO GENERATOR -->
-    <div class="full-width card manifesto-output" id="manifesto">
-        <h2>Cognitive Charter & Support Protocol</h2>
-        <div id="manifestoText">Adjust your architecture to generate your manifesto...</div>
-    </div>
-
-    <!-- TASKS & MANEUVERS -->
-    <div class="full-width card">
-        <h3>Archives of Action (Tasks)</h3>
-        <div class="task-controls">
-            <input type="text" id="taskName" placeholder="Task Name..." style="flex: 2;">
-            <select id="taskEnergy">
-                <option value="energy-low">Energy: Low (Spoons Saved)</option>
-                <option value="energy-high">Energy: High (Deep Work)</option>
+    <!-- COL 2: ACTION LEDGER -->
+    <div class="manuscript">
+        <h3>The Action Ledger</h3>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <input type="text" id="tName" placeholder="Maneuver Description..." style="flex: 1; padding: 10px;">
+            <select id="tComplexity" style="padding: 10px;">
+                <option value="1">L1: Routine</option>
+                <option value="3">L2: Logic-Heavy</option>
+                <option value="5">L3: Deep Synthesis</option>
             </select>
-            <button class="btn" onclick="addTask()">Add to Ledger</button>
+            <button class="btn-gold" style="width: auto; margin-top: 0;" onclick="addTask()">RECORD</button>
         </div>
-        <div id="taskLedger"></div>
+
+        <div id="ledgerItems"></div>
+    </div>
+
+    <!-- COL 3: CONTEXT BUFFER -->
+    <div class="manuscript">
+        <h3>Context Preservation Buffer</h3>
+        <p style="font-size: 0.8rem;">Before you switch tasks, dump your current "Mental RAM" here to prevent context loss.</p>
+        <textarea id="brainDump" style="width: 100%; height: 100px; background: transparent; border: 1px solid var(--gold); font-family: 'EB Garamond'; padding: 10px;" placeholder="What's the thread you're holding onto?"></textarea>
+        <button class="btn-gold" onclick="saveContext()">FREEZE STATE</button>
+
+        <h3>System Archives</h3>
+        <div class="console" id="consoleOutput">System standing by... No context frozen.</div>
+        
+        <div id="loadStatus" style="margin-top: 20px; padding: 15px; border: 1px solid var(--wine); font-size: 0.85rem;">
+            <b>Load Balancer:</b> <span id="loadText">NOMINAL</span>
+        </div>
     </div>
 </div>
 
 <script>
-    // --- 8-AXIS RADAR CHART ---
-    const ctx = document.getElementById('spikeMap').getContext('2d');
-    const labels = ['Synthesis', 'Focus', 'Creativity', 'Memory', 'Initiation', 'Switching', 'Sensory', 'Social'];
-    const initialData = [9, 8, 7, 4, 3, 4, 4, 5];
-
-    let myChart = new Chart(ctx, {
+    // --- Chart ---
+    const ctx = document.getElementById('radarChart').getContext('2d');
+    let chart = new Chart(ctx, {
         type: 'radar',
         data: {
-            labels: labels,
-            datasets: [{
-                label: 'Cognitive Architecture',
-                data: initialData,
-                backgroundColor: 'rgba(20, 33, 61, 0.08)',
-                borderColor: '#14213d',
-                pointBackgroundColor: '#b8860b',
-                pointBorderColor: '#fff',
-                pointRadius: 5,
-                borderWidth: 2
-            }]
+            labels: ['Synthesis', 'Sensory', 'Energy', 'Focus', 'Initiation', 'Memory'],
+            datasets: [{ data: [9, 3, 8, 7, 4, 5], backgroundColor: 'rgba(94, 26, 30, 0.1)', borderColor: '#5e1a1e', borderWidth: 1 }]
         },
-        options: {
-            scales: {
-                r: {
-                    min: 0, max: 10,
-                    grid: { color: '#d1cfb7', lineWidth: 1 },
-                    angleLines: { color: '#d1cfb7' },
-                    pointLabels: { 
-                        font: { family: "'Playfair Display'", size: 16, weight: '700' },
-                        color: '#14213d'
-                    },
-                    ticks: { display: false }
-                }
-            },
-            plugins: { legend: { display: false } }
-        }
+        options: { scales: { r: { min: 0, max: 10, ticks: { display: false } } }, plugins: { legend: false } }
     });
 
-    // Update Logic
-    const ids = ['s1', 's2', 's3', 's4', 'f1', 'f2', 'f3', 'f4'];
-    ids.forEach((id, i) => {
-        document.getElementById(id).oninput = (e) => {
-            myChart.data.datasets[0].data[i] = e.target.value;
-            myChart.update();
-            generateManifesto();
-        };
-    });
-
-    // --- MANIFESTO GENERATOR ---
-    function generateManifesto() {
-        const d = myChart.data.datasets[0].data;
-        let text = `<p>Based on the analyzed architecture, the subject demonstrates a <b>Highly Nonlinear Cognitive Profile</b>. The following environment protocols are mandated:</p>`;
-
-        text += `<ul>`;
-        if (d[0] > 7) text += `<li><b>Synthesis Peak:</b> Capable of integrating disparate fields. The subject should not be restricted to siloed tasks but encouraged to find cross-disciplinary 'hooks'.</li>`;
-        if (d[1] > 7) text += `<li><b>Hyperfocus Asset:</b> Deep-work windows of 4+ hours are required. Interruptions during these cycles carry a 30% cognitive penalty.</li>`;
-        if (d[4] < 5) text += `<li><b>Initiation Support:</b> High resistance to 'Blank Page' starts. Recommend collaborative 'Body Doubling' or micro-task decomposition.</li>`;
-        if (d[6] < 5) text += `<li><b>Sensory Integrity:</b> Vulnerable to environmental 'Noise'. High-quality audio-isolation and regulated illumination are essential tools, not luxuries.</li>`;
-        if (d[3] < 5) text += `<li><b>External Memory:</b> Working memory bottlenecks exist. Every verbal directive must be mirrored in a permanent, searchable digital ledger.</li>`;
-        text += `</ul>`;
+    // --- Overload Logic ---
+    let totalComplexity = 0;
+    function checkOverload() {
+        const energy = document.getElementById('s3').value;
+        const loadText = document.getElementById('loadText');
+        const wrapper = document.getElementById('mainWrapper');
         
-        text += `<p align="right"><i>Authenticated by CAF v2.0 Protocol</i></p>`;
-        document.getElementById('manifestoText').innerHTML = text;
+        const stressRatio = totalComplexity / energy;
+
+        if (stressRatio > 1.5) {
+            loadText.innerText = "CRITICAL OVERCLOCK";
+            loadText.style.color = "red";
+            wrapper.classList.add('overload-active');
+        } else {
+            loadText.innerText = "NOMINAL";
+            loadText.style.color = "var(--wine)";
+            wrapper.classList.remove('overload-active');
+        }
     }
 
-    // --- TASK LEDGER ---
+    // --- Task Ledger ---
     let tasks = [];
     function addTask() {
-        const name = document.getElementById('taskName').value;
-        const energy = document.getElementById('taskEnergy').value;
-        if (!name) return;
+        const name = document.getElementById('tName').value;
+        const comp = parseInt(document.getElementById('tComplexity').value);
+        if(!name) return;
 
-        tasks.push({ id: Date.now(), name, energy, snoozes: 0 });
-        document.getElementById('taskName').value = "";
-        renderTasks();
+        tasks.push({ id: Date.now(), name, comp });
+        totalComplexity += comp;
+        document.getElementById('tName').value = "";
+        renderLedger();
+        checkOverload();
     }
 
-    function snooze(id) {
-        const t = tasks.find(x => x.id === id);
-        t.snoozes++;
-        renderTasks();
-    }
-
-    function remove(id) {
-        tasks = tasks.filter(x => x.id !== id);
-        renderTasks();
-    }
-
-    function renderTasks() {
-        const ledger = document.getElementById('taskLedger');
-        ledger.innerHTML = "";
+    function renderLedger() {
+        const container = document.getElementById('ledgerItems');
+        container.innerHTML = "";
         tasks.forEach(t => {
-            const div = document.createElement('div');
-            div.className = "task-item";
-            
-            let triage = "";
-            if (t.snoozes >= 3) {
-                triage = `<div class="shame-free-dialog">
-                    <b>Triage Protocol:</b> You've snoozed "${t.name}" multiple times. 
-                    <i>Observed Behavior: Avoidance/Resistance.</i> 
-                    Is this task still vital? Should we split it into 5-minute pieces or archive it to free your mind?
-                </div>`;
-            }
-
-            div.innerHTML = `
-                <div style="flex:1;">
-                    <span class="energy-tag ${t.energy}">${t.energy.split('-')[1]} Energy</span>
-                    <b style="font-size:1.2rem; display:block; margin-top:5px;">${t.name}</b>
-                    ${triage}
-                </div>
-                <div>
-                    <button class="btn" style="background:transparent; color:var(--gold); border:1px solid var(--gold); margin-right:5px;" onclick="snooze(${t.id})">Snooze</button>
-                    <button class="btn" onclick="remove(${t.id})">Resolved</button>
+            container.innerHTML += `
+                <div class="task-item">
+                    <span class="tag">LVL ${t.comp}</span> <b>${t.name}</b>
+                    <button onclick="removeTask(${t.id}, ${t.comp})" style="float:right; cursor:pointer; background:none; border:none; color:var(--wine);">[Resolve]</button>
                 </div>
             `;
-            ledger.appendChild(div);
         });
     }
 
-    generateManifesto();
+    function removeTask(id, comp) {
+        tasks = tasks.filter(x => x.id !== id);
+        totalComplexity -= comp;
+        renderLedger();
+        checkOverload();
+    }
+
+    // --- Hardening Script ---
+    function generateConfig() {
+        const sensory = document.getElementById('s2').value;
+        const config = {
+            "editor.minimap.enabled": sensory < 5,
+            "editor.fontFamily": "JetBrains Mono",
+            "workbench.colorTheme": sensory > 7 ? "High Contrast Ink" : "Dark Academia Lite",
+            "editor.renderWhitespace": "none",
+            "editor.guides.indentation": false
+        };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
+        const dlAnchorElem = document.createElement('a');
+        dlAnchorElem.setAttribute("href", dataStr);
+        dlAnchorElem.setAttribute("download", "settings.json");
+        dlAnchorElem.click();
+    }
+
+    // --- Context Freeze ---
+    function saveContext() {
+        const dump = document.getElementById('brainDump').value;
+        if(!dump) return;
+        const timestamp = new Date().toLocaleTimeString();
+        document.getElementById('consoleOutput').innerHTML += `<br>[${timestamp}] STATE_FROZEN: ${dump.substring(0, 30)}...`;
+        document.getElementById('brainDump').value = "";
+    }
 </script>
-</body>  
+</body>
 </html>
