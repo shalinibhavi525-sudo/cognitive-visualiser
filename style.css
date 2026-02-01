@@ -1,0 +1,63 @@
+.serif { font-family: 'Playfair Display', serif; }
+
+/* INPUTS */
+.auth-input, .ledger-input {
+    width: 100%;
+    background: transparent;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+    padding: 0.75rem 0;
+    outline: none;
+    transition: all 0.5s;
+    color: #F5F2E7;
+}
+
+.ledger-input:focus { border-bottom-color: #C5A059; }
+
+/* BUTTONS */
+.btn-elegant {
+    background: #C5A059;
+    color: #121212;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    padding: 1.25rem;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.btn-elegant:hover {
+    background: #e2c07d;
+    letter-spacing: 0.3em;
+}
+
+/* SENSORY ADAPTATION (PARCHMENT MODE) */
+body.mode-calm {
+    background-color: #F5F2E7 !important;
+    color: #1B2621 !important;
+}
+
+body.mode-calm .auth-card, body.mode-calm .tool-card {
+    background: #fff !important;
+    border-color: rgba(0,0,0,0.1) !important;
+    color: #1B2621 !important;
+}
+
+body.mode-calm .ledger-input { color: #1B2621; border-bottom-color: rgba(0,0,0,0.1); }
+body.mode-calm .btn-elegant { background: #1B2621; color: #F5F2E7; }
+
+/* CUSTOM SLIDERS */
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: rgba(197, 160, 89, 0.1);
+    height: 1px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 12px;
+    width: 12px;
+    background: #C5A059;
+    cursor: pointer;
+    border-radius: 0;
+}
