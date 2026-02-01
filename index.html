@@ -3,255 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAF | The Gentle Triage</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>The Cognitive Manuscript | CAF v2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Inter:wght@300;400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --parchment: #fdfcf0; 
-            --ink: #1a1a1a;       
-            --gold: #b8860b;      
-            --border: #d1cfb7;    
-            --text-secondary: #555;
+            --paper: #fcfaf2;
+            --oxford-blue: #14213d;
+            --crimson: #7b0d1e;
+            --gold: #b8860b;
+            --ink: #1a1a1a;
+            --sepia: #d1cfb7;
+            --shadow: rgba(20, 33, 61, 0.15);
         }
 
         body {
-            background-color: var(--parchment);
+            background-color: var(--paper);
             color: var(--ink);
-            font-family: 'Inter', sans-serif;
+            font-family: 'EB Garamond', serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
         }
 
         header {
             width: 100%;
-            padding: 40px 0 20px 0;
+            padding: 60px 0 30px 0;
             text-align: center;
-            border-bottom: 1px double var(--border);
-            margin-bottom: 30px;
+            border-bottom: 3px double var(--sepia);
+            margin-bottom: 40px;
         }
 
-        h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-style: italic; margin: 0; }
-        .tagline { font-family: 'Playfair Display', serif; color: var(--text-secondary); font-style: italic; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin: 0; font-weight: 700; color: var(--oxford-blue); }
+        .tagline { font-family: 'Playfair Display', serif; font-style: italic; color: var(--crimson); font-size: 1.2rem; }
 
-        .app-container {
-            max-width: 1100px;
+        .layout {
+            max-width: 1200px;
             width: 95%;
             display: grid;
-            grid-template-columns: 350px 1fr;
+            grid-template-columns: 380px 1fr;
             gap: 40px;
-            margin-bottom: 50px;
-        }
-
-        .panel { padding: 20px; border: 1px solid var(--border); background: white; box-shadow: 5px 5px 0px var(--border); }
-
-        .control-section h3 { font-family: 'Playfair Display', serif; color: var(--gold); border-bottom: 1px solid var(--border); padding-bottom: 5px; margin-bottom: 15px; }
-
-        .slider-wrap { margin-bottom: 15px; }
-        .slider-wrap label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; }
-        input[type=range] { width: 100%; accent-color: var(--gold); cursor: pointer; }
-
-        /* Task Section */
-        .task-area {
-            grid-column: span 2;
-            background: white;
-            border: 1px solid var(--border);
-            padding: 30px;
-            box-shadow: 8px 8px 0px var(--border);
             margin-bottom: 100px;
         }
 
-        .task-input-row { display: flex; gap: 10px; margin-bottom: 20px; }
-        input[type=text] { flex: 1; padding: 10px; border: 1px solid var(--border); font-family: 'Inter'; }
-        
-        .btn { 
-            background: var(--ink); color: var(--parchment); border: none; padding: 10px 20px; 
-            font-family: 'Playfair Display'; cursor: pointer; transition: 0.2s;
+        /* Panels */
+        .card {
+            background: white;
+            border: 1px solid var(--sepia);
+            padding: 30px;
+            box-shadow: 12px 12px 0px var(--shadow);
+            position: relative;
         }
-        .btn:hover { background: var(--gold); }
 
-        .task-card {
-            border-bottom: 1px solid var(--border);
-            padding: 15px 0;
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
+            border: 1px solid var(--sepia);
+            pointer-events: none;
+        }
+
+        h3 { font-family: 'Playfair Display', serif; color: var(--oxford-blue); border-bottom: 2px solid var(--gold); padding-bottom: 5px; margin-bottom: 20px; }
+
+        /* Sliders */
+        .slider-group { margin-bottom: 20px; }
+        .slider-group label { display: block; font-weight: 600; font-size: 1rem; margin-bottom: 8px; font-family: 'Inter', sans-serif; color: var(--oxford-blue); }
+        input[type=range] { width: 100%; accent-color: var(--gold); cursor: pointer; }
+
+        /* Chart Area */
+        .chart-container { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        /* Task & Manifesto Area */
+        .full-width { grid-column: span 2; }
+        
+        .manifesto-output {
+            background: white;
+            border: 2px solid var(--oxford-blue);
+            padding: 50px;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .manifesto-output h2 { font-family: 'Playfair Display', serif; text-align: center; color: var(--crimson); text-decoration: underline; margin-bottom: 30px; }
+
+        /* Complex Tasks */
+        .task-controls { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+        input[type=text], select { 
+            padding: 12px; border: 1px solid var(--sepia); font-family: 'Inter'; font-size: 0.9rem;
+            background: #fff;
+        }
+        
+        .btn {
+            background: var(--oxford-blue); color: var(--paper); border: none; padding: 12px 25px;
+            font-family: 'Playfair Display'; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .btn:hover { background: var(--crimson); }
+
+        .task-item {
+            border-bottom: 1px solid var(--sepia);
+            padding: 20px 0;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
         }
 
-        .triage-alert {
-            background: #fff9e6;
-            border: 1px solid var(--gold);
+        .energy-tag { padding: 3px 8px; border-radius: 3px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; color: white; }
+        .energy-high { background: var(--crimson); }
+        .energy-low { background: #2a9d8f; }
+
+        .shame-free-dialog {
+            background: #fffdf2;
+            border-left: 4px solid var(--gold);
             padding: 15px;
-            margin-top: 10px;
+            margin-top: 15px;
             font-style: italic;
-            font-size: 0.9rem;
+            color: var(--ink);
         }
 
-        @media (max-width: 850px) { .app-container { grid-template-columns: 1fr; } .task-area { grid-column: span 1; } }
+        @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
+
+        @media print {
+            .slider-group, .task-controls, .btn, header { display: none; }
+            .manifesto-output { border: none; box-shadow: none; }
+            body { background: white; }
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>The Gentle Architecture</h1>
-    <div class="tagline">v1.3: Understanding the "Wall of Awful" through Data</div>
+    <h1>The Cognitive Manuscript</h1>
+    <div class="tagline">An Archetypal Mapping of the Spiky Profile — v2.0</div>
 </header>
 
-<div class="app-container">
-    <!-- LEFT: THE RATINGS -->
-    <div class="panel">
+<div class="layout">
+    <!-- LEFT: THE ARCHITECTURE -->
+    <div class="card">
         <div class="control-section">
-            <h3>My Strengths</h3>
-            <div class="slider-wrap">
-                <label>Seeing Connections</label>
-                <input type="range" min="1" max="10" value="9" id="s1">
-            </div>
-            <div class="slider-wrap">
-                <label>Deep Focus Power</label>
-                <input type="range" min="1" max="10" value="8" id="s2">
-            </div>
+            <h3>Intellectual Spikes</h3>
+            <div class="slider-group"><label>Pattern Synthesis</label><input type="range" min="1" max="10" value="9" id="s1"></div>
+            <div class="slider-group"><label>Hyperfocus Depth</label><input type="range" min="1" max="10" value="8" id="s2"></div>
+            <div class="slider-group"><label>Divergent Creativity</label><input type="range" min="1" max="10" value="7" id="s3"></div>
+            <div class="slider-group"><label>Working Memory</label><input type="range" min="1" max="10" value="4" id="s4"></div>
         </div>
 
         <div class="control-section">
-            <h3>My Friction</h3>
-            <div class="slider-wrap">
-                <label>Starting the Work</label>
-                <input type="range" min="1" max="10" value="3" id="f1">
-            </div>
-            <div class="slider-wrap">
-                <label>Switching Gears</label>
-                <input type="range" min="1" max="10" value="4" id="f2">
-            </div>
-            <div class="slider-wrap">
-                <label>Background Noise</label>
-                <input type="range" min="1" max="10" value="4" id="f3">
-            </div>
+            <h3>Friction Valleys</h3>
+            <div class="slider-group"><label>Task Initiation</label><input type="range" min="1" max="10" value="3" id="f1"></div>
+            <div class="slider-group"><label>Context Switching</label><input type="range" min="1" max="10" value="4" id="f2"></div>
+            <div class="slider-group"><label>Sensory Regulation</label><input type="range" min="1" max="10" value="4" id="f3"></div>
+            <div class="slider-group"><label>Social Calibration</label><input type="range" min="1" max="10" value="5" id="f4"></div>
         </div>
     </div>
 
-    <!-- RIGHT: THE RADAR -->
-    <div class="panel">
-        <canvas id="radarChart" style="max-height: 400px;"></canvas>
+    <!-- RIGHT: THE SCIENTIFIC MAP -->
+    <div class="card chart-container">
+        <canvas id="spikeMap"></canvas>
+        <button class="btn" style="margin-top: 20px;" onclick="window.print()">Archive This Manuscript (PDF)</button>
     </div>
 
-    <!-- BOTTOM: TASKS & MANEUVERS -->
-    <div class="task-area">
-        <h2 style="font-family: 'Playfair Display'; border-bottom: 2px solid var(--gold); display: inline-block;">Tasks & Maneuvers</h2>
-        <p style="font-size: 0.9rem; color: #666;">Add your tasks. If you keep snoozing them, we'll talk about it—no judgment.</p>
-        
-        <div class="task-input-row">
-            <input type="text" id="taskInput" placeholder="What's on your mind?">
-            <button class="btn" onclick="addTask()">Add Task</button>
-        </div>
+    <!-- MANIFESTO GENERATOR -->
+    <div class="full-width card manifesto-output" id="manifesto">
+        <h2>Cognitive Charter & Support Protocol</h2>
+        <div id="manifestoText">Adjust your architecture to generate your manifesto...</div>
+    </div>
 
-        <div id="taskList"></div>
+    <!-- TASKS & MANEUVERS -->
+    <div class="full-width card">
+        <h3>Archives of Action (Tasks)</h3>
+        <div class="task-controls">
+            <input type="text" id="taskName" placeholder="Task Name..." style="flex: 2;">
+            <select id="taskEnergy">
+                <option value="energy-low">Energy: Low (Spoons Saved)</option>
+                <option value="energy-high">Energy: High (Deep Work)</option>
+            </select>
+            <button class="btn" onclick="addTask()">Add to Ledger</button>
+        </div>
+        <div id="taskLedger"></div>
     </div>
 </div>
 
 <script>
-    // --- Chart Logic ---
-    const ctx = document.getElementById('radarChart').getContext('2d');
-    const labels = ['Connections', 'Focus', 'Starting', 'Switching', 'Noise', 'Energy'];
-    const initialData = [9, 8, 3, 4, 4, 7];
+    // --- 8-AXIS RADAR CHART ---
+    const ctx = document.getElementById('spikeMap').getContext('2d');
+    const labels = ['Synthesis', 'Focus', 'Creativity', 'Memory', 'Initiation', 'Switching', 'Sensory', 'Social'];
+    const initialData = [9, 8, 7, 4, 3, 4, 4, 5];
 
-    let chart = new Chart(ctx, {
+    let myChart = new Chart(ctx, {
         type: 'radar',
         data: {
             labels: labels,
             datasets: [{
+                label: 'Cognitive Architecture',
                 data: initialData,
-                backgroundColor: 'rgba(184, 134, 11, 0.1)',
-                borderColor: '#1a1a1a',
+                backgroundColor: 'rgba(20, 33, 61, 0.08)',
+                borderColor: '#14213d',
                 pointBackgroundColor: '#b8860b',
-                borderWidth: 1.5
+                pointBorderColor: '#fff',
+                pointRadius: 5,
+                borderWidth: 2
             }]
         },
         options: {
             scales: {
-                r: { min: 0, max: 10, ticks: { display: false }, grid: { color: '#d1cfb7' }, 
-                     pointLabels: { font: { family: "'Playfair Display'", size: 14 } } }
+                r: {
+                    min: 0, max: 10,
+                    grid: { color: '#d1cfb7', lineWidth: 1 },
+                    angleLines: { color: '#d1cfb7' },
+                    pointLabels: { 
+                        font: { family: "'Playfair Display'", size: 16, weight: '700' },
+                        color: '#14213d'
+                    },
+                    ticks: { display: false }
+                }
             },
             plugins: { legend: { display: false } }
         }
     });
 
-    // Update chart on slider change
-    const sliders = ['s1', 's2', 'f1', 'f2', 'f3'];
-    sliders.forEach((id, i) => {
+    // Update Logic
+    const ids = ['s1', 's2', 's3', 's4', 'f1', 'f2', 'f3', 'f4'];
+    ids.forEach((id, i) => {
         document.getElementById(id).oninput = (e) => {
-            chart.data.datasets[0].data[i] = e.target.value;
-            chart.update();
-        }
+            myChart.data.datasets[0].data[i] = e.target.value;
+            myChart.update();
+            generateManifesto();
+        };
     });
 
-    // --- Task & Triage Logic ---
+    // --- MANIFESTO GENERATOR ---
+    function generateManifesto() {
+        const d = myChart.data.datasets[0].data;
+        let text = `<p>Based on the analyzed architecture, the subject demonstrates a <b>Highly Nonlinear Cognitive Profile</b>. The following environment protocols are mandated:</p>`;
+
+        text += `<ul>`;
+        if (d[0] > 7) text += `<li><b>Synthesis Peak:</b> Capable of integrating disparate fields. The subject should not be restricted to siloed tasks but encouraged to find cross-disciplinary 'hooks'.</li>`;
+        if (d[1] > 7) text += `<li><b>Hyperfocus Asset:</b> Deep-work windows of 4+ hours are required. Interruptions during these cycles carry a 30% cognitive penalty.</li>`;
+        if (d[4] < 5) text += `<li><b>Initiation Support:</b> High resistance to 'Blank Page' starts. Recommend collaborative 'Body Doubling' or micro-task decomposition.</li>`;
+        if (d[6] < 5) text += `<li><b>Sensory Integrity:</b> Vulnerable to environmental 'Noise'. High-quality audio-isolation and regulated illumination are essential tools, not luxuries.</li>`;
+        if (d[3] < 5) text += `<li><b>External Memory:</b> Working memory bottlenecks exist. Every verbal directive must be mirrored in a permanent, searchable digital ledger.</li>`;
+        text += `</ul>`;
+        
+        text += `<p align="right"><i>Authenticated by CAF v2.0 Protocol</i></p>`;
+        document.getElementById('manifestoText').innerHTML = text;
+    }
+
+    // --- TASK LEDGER ---
     let tasks = [];
-
     function addTask() {
-        const input = document.getElementById('taskInput');
-        if (!input.value) return;
-        
-        const newTask = {
-            id: Date.now(),
-            text: input.value,
-            snoozes: 0,
-            addedOn: new Date().toLocaleDateString()
-        };
-        
-        tasks.push(newTask);
-        input.value = "";
+        const name = document.getElementById('taskName').value;
+        const energy = document.getElementById('taskEnergy').value;
+        if (!name) return;
+
+        tasks.push({ id: Date.now(), name, energy, snoozes: 0 });
+        document.getElementById('taskName').value = "";
         renderTasks();
     }
 
-    function snoozeTask(id) {
-        const task = tasks.find(t => t.id === id);
-        task.snoozes++;
+    function snooze(id) {
+        const t = tasks.find(x => x.id === id);
+        t.snoozes++;
         renderTasks();
     }
 
-    function deleteTask(id) {
-        tasks = tasks.filter(t => t.id !== id);
+    function remove(id) {
+        tasks = tasks.filter(x => x.id !== id);
         renderTasks();
     }
 
     function renderTasks() {
-        const list = document.getElementById('taskList');
-        list.innerHTML = "";
-
-        tasks.forEach(task => {
-            const card = document.createElement('div');
-            card.className = "task-card";
+        const ledger = document.getElementById('taskLedger');
+        ledger.innerHTML = "";
+        tasks.forEach(t => {
+            const div = document.createElement('div');
+            div.className = "task-item";
             
-            // Triage Logic: If snoozed more than 2 times
-            let triageMsg = "";
-            if (task.snoozes >= 3) {
-                triageMsg = `
-                    <div class="triage-alert">
-                        <b>Gentle Check-in:</b> You've snoozed this ${task.snoozes} times. 
-                        Activity Rate: Low. <br>
-                        "Hey, is this still important to you? Should we delete it or hide it for a week?"
-                        <br>
-                        <button class="btn" style="padding: 5px 10px; margin-top: 10px; font-size: 0.7rem;" onclick="deleteTask(${task.id})">Delete (Let it go)</button>
-                    </div>
-                `;
+            let triage = "";
+            if (t.snoozes >= 3) {
+                triage = `<div class="shame-free-dialog">
+                    <b>Triage Protocol:</b> You've snoozed "${t.name}" multiple times. 
+                    <i>Observed Behavior: Avoidance/Resistance.</i> 
+                    Is this task still vital? Should we split it into 5-minute pieces or archive it to free your mind?
+                </div>`;
             }
 
-            card.innerHTML = `
-                <div style="flex: 1;">
-                    <span style="font-weight: 600;">${task.text}</span> <br>
-                    <small style="color: #888;">Added: ${task.addedOn} | Snoozed: ${task.snoozes} times</small>
-                    ${triageMsg}
+            div.innerHTML = `
+                <div style="flex:1;">
+                    <span class="energy-tag ${t.energy}">${t.energy.split('-')[1]} Energy</span>
+                    <b style="font-size:1.2rem; display:block; margin-top:5px;">${t.name}</b>
+                    ${triage}
                 </div>
                 <div>
-                    <button class="btn" style="background: transparent; color: var(--gold); border: 1px solid var(--gold);" onclick="snoozeTask(${task.id})">Snooze</button>
-                    <button class="btn" style="background: transparent; color: #888;" onclick="deleteTask(${task.id})">Done</button>
+                    <button class="btn" style="background:transparent; color:var(--gold); border:1px solid var(--gold); margin-right:5px;" onclick="snooze(${t.id})">Snooze</button>
+                    <button class="btn" onclick="remove(${t.id})">Resolved</button>
                 </div>
             `;
-            list.appendChild(card);
+            ledger.appendChild(div);
         });
     }
+
+    generateManifesto();
 </script>
 </body>  
 </html>
