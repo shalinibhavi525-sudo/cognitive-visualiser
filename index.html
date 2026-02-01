@@ -2,279 +2,256 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The High-Scholar's Ledger | CAF v6.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>The Scholar's Control Plane | CAF v8.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-deep: #0a0e14;      /* Deep Navy */
-            --paper: #fdfaf2;       /* Aged Parchment */
-            --ink: #1a1a1b;
-            --wine: #722f37;        /* Muted Crimson */
-            --gold: #b8860b;        /* Burnished Brass */
-            --forest: #2d3a30;      /* Hunter Green */
-            --slate: #4a4e69;       /* Gray-Blue */
-            --border: #d1cfb7;
+            --bg: #0d0d0d;
+            --vellum: #f4f1e1;
+            --ink: #1a1a1a;
+            --oxblood: #660708;
+            --gold: #9a8c73;
+            --moss: #2b2d24;
+            --slate: #4a4e69;
+            --warning: #ff4d4d;
         }
 
         body {
-            background-color: var(--bg-deep);
+            background-color: var(--bg);
             color: var(--ink);
             font-family: 'EB Garamond', serif;
-            margin: 0; padding: 40px 0;
-            background-image: url("https://www.transparenttextures.com/patterns/dark-leather.png");
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center;
+            transition: filter 1s ease, opacity 1s ease;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            background: var(--paper);
-            padding: 60px;
-            box-shadow: 20px 20px 60px rgba(0,0,0,0.5);
-            border: 1px solid var(--gold);
-            position: relative;
-        }
-
-        .container::before {
-            content: ""; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px;
-            border: 1px solid var(--border); pointer-events: none;
+        .master-grid {
+            max-width: 1400px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 20px;
         }
 
         header {
-            text-align: center;
-            border-bottom: 3px double var(--gold);
-            padding-bottom: 30px;
-            margin-bottom: 50px;
+            grid-column: span 2;
+            background: var(--vellum);
+            border: 2px solid var(--gold);
+            padding: 30px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin: 0; color: var(--wine); }
-        .tagline { font-family: 'Playfair Display', serif; font-style: italic; color: var(--slate); font-size: 1.2rem; }
+        h1 { font-family: 'Playfair Display'; font-size: 2.8rem; margin: 0; color: var(--oxblood); }
 
-        section { margin-bottom: 60px; position: relative; z-index: 1; }
-        h2 { font-family: 'Playfair Display'; border-bottom: 2px solid var(--wine); padding-bottom: 10px; color: var(--wine); display: inline-block; }
-
-        /* Multi-Color Grid */
-        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
-        
-        .control-panel { background: #f9f6ef; padding: 25px; border: 1px solid var(--border); }
-        .slider-wrap { margin-bottom: 20px; }
-        .slider-wrap label { display: block; font-family: 'Inter'; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--slate); margin-bottom: 8px; }
-        
-        input[type=range] { width: 100%; accent-color: var(--gold); cursor: pointer; }
-
-        /* The Chart Panel */
-        .chart-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; background: white; border: 1px solid var(--border); padding: 20px; box-shadow: inset 0 0 20px rgba(0,0,0,0.05); }
-
-        /* The Manifesto Section */
-        .manifesto-card {
-            background: var(--bg-deep);
-            color: var(--paper);
-            padding: 40px;
-            margin-top: 30px;
-            border-left: 5px solid var(--gold);
-            line-height: 1.8;
-            font-size: 1.1rem;
+        .panel {
+            background: var(--vellum);
+            border: 1px solid var(--gold);
+            padding: 25px;
+            box-shadow: 10px 10px 40px rgba(0,0,0,0.3);
+            position: relative;
         }
-        .manifesto-card h3 { font-family: 'Playfair Display'; color: var(--gold); margin-top: 0; font-style: italic; }
 
-        /* Task Ledger */
-        .task-input { display: grid; grid-template-columns: 1fr 150px 150px; gap: 10px; margin-bottom: 30px; }
-        input[type=text], select { padding: 12px; background: transparent; border: 1px solid var(--gold); font-family: 'EB Garamond'; font-size: 1rem; }
-        
-        .btn { 
-            background: var(--wine); color: var(--paper); border: none; padding: 12px 25px; 
+        /* Focus Firewall State */
+        .firewall-active .hide-on-focus { display: none !important; }
+        .firewall-active .master-grid { grid-template-columns: 1fr; }
+
+        h2 { font-family: 'Playfair Display'; border-bottom: 1px solid var(--oxblood); color: var(--oxblood); padding-bottom: 5px; font-size: 1.2rem; }
+
+        /* The Instrumentation Monitor */
+        .monitor {
+            background: #000; color: #00ffaa;
+            padding: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+            border-radius: 4px; border: 1px solid var(--gold);
+            line-height: 1.5;
+        }
+
+        .slider-group { margin-bottom: 15px; }
+        label { display: block; font-family: 'JetBrains Mono'; font-size: 0.65rem; text-transform: uppercase; color: var(--slate); margin-bottom: 4px; }
+        input[type=range] { width: 100%; accent-color: var(--oxblood); cursor: pointer; }
+
+        /* Task & Action */
+        .task-input { display: grid; grid-template-columns: 1fr 100px; gap: 10px; margin-bottom: 20px; }
+        input[type=text], select { padding: 10px; background: white; border: 1px solid var(--gold); font-family: 'EB Garamond'; font-size: 1rem; }
+
+        .btn {
+            background: var(--oxblood); color: white; border: none; padding: 12px;
             font-family: 'Playfair Display'; font-weight: bold; cursor: pointer; transition: 0.3s;
-            box-shadow: 3px 3px 0px var(--ink);
         }
-        .btn:hover { background: var(--forest); transform: translate(-2px, -2px); box-shadow: 5px 5px 0px var(--ink); }
-        .btn-gold { background: var(--gold); color: white; }
+        .btn:hover { background: #a4161a; }
+        .btn-gold { background: var(--gold); color: black; }
 
-        .task-row {
-            border-bottom: 1px dashed var(--border);
-            padding: 15px 0;
-            display: flex; justify-content: space-between; align-items: flex-start;
+        .task-item {
+            border-bottom: 1px dashed var(--gold); padding: 15px 0;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        .snooze-box { background: #fff9e6; border: 1px solid var(--gold); padding: 15px; margin-top: 10px; font-style: italic; font-size: 0.9rem; color: var(--ink); }
+        .archetype-badge {
+            background: var(--moss); color: var(--vellum);
+            padding: 5px 10px; font-family: 'Playfair Display'; font-style: italic; font-size: 0.9rem;
+            display: inline-block; margin-top: 10px;
+        }
 
-        @media (max-width: 900px) { .main-grid, .task-input { grid-template-columns: 1fr; } }
-        @media print { .btn, .control-panel, input, select { display: none; } .container { box-shadow: none; border: none; } body { background: white; } }
+        /* Thermal Throttling Effect */
+        .throttled { filter: grayscale(0.8) brightness(0.5); pointer-events: none; }
     </style>
 </head>
-<body>
+<body id="bodyRoot">
 
-<div class="container">
+<div class="master-grid">
     <header>
-        <h1>The Scholar’s Ledger</h1>
-        <div class="tagline">An Archetypal Mapping of the Spiky Profile</div>
+        <h1>The Scholar's Control Plane</h1>
+        <div style="font-family: 'Playfair Display'; font-style: italic;">Cognitive Architecture & Thermal Throttling Layer | v8.0</div>
     </header>
 
-    <div class="main-grid">
-        <!-- ARCHITECTURE CONTROLS -->
-        <div class="control-panel">
-            <h2 style="font-size: 1.2rem; color: var(--slate);">Cognitive Peaks</h2>
-            <div class="slider-wrap"><label>Synthesis (Connections)</label><input type="range" id="v1" min="1" max="10" value="9"></div>
-            <div class="slider-wrap"><label>Focus Strength</label><input type="range" id="v2" min="1" max="10" value="8"></div>
-            <div class="slider-wrap"><label>Creative Synthesis</label><input type="range" id="v3" min="1" max="10" value="7"></div>
-            <div class="slider-wrap"><label>Associative Memory</label><input type="range" id="v4" min="1" max="10" value="6"></div>
+    <!-- LEFT: SYSTEMS INSTRUMENTATION -->
+    <div class="panel hide-on-focus">
+        <h2>System Monitoring</h2>
+        <div class="monitor" id="sysMon">
+            CORE_TEMP: 32°C (STABLE)<br>
+            LOAD: 0%<br>
+            ARCHETYPE: INITIALIZING...
+        </div>
+        <div class="archetype-badge" id="archBadge">Determining Persona...</div>
 
-            <h2 style="font-size: 1.2rem; color: var(--wine); border-color: var(--wine);">Active Friction</h2>
-            <div class="slider-wrap"><label>Task Initiation</label><input type="range" id="v5" min="1" max="10" value="3"></div>
-            <div class="slider-wrap"><label>Context Switching</label><input type="range" id="v6" min="1" max="10" value="4"></div>
-            <div class="slider-wrap"><label>Sensory Load</label><input type="range" id="v7" min="1" max="10" value="4"></div>
-            <div class="slider-wrap"><label>Social Overhead</label><input type="range" id="v8" min="1" max="10" value="5"></div>
+        <h2 style="margin-top: 30px;">Input Bias</h2>
+        <div class="slider-group">
+            <label>Environmental Noise (mB)</label>
+            <input type="range" id="noise" min="1" max="10" value="2">
+        </div>
+        <div class="slider-group">
+            <label>Physical Fatigue</label>
+            <input type="range" id="fatigue" min="1" max="10" value="1">
         </div>
 
-        <!-- THE MAP -->
-        <div class="chart-panel">
-            <canvas id="spikeMap"></canvas>
-            <button class="btn btn-gold" style="margin-top: 30px;" onclick="window.print()">PUBLISH MY MANIFESTO (PDF)</button>
-        </div>
+        <h2>Cognitive Architecture</h2>
+        <div class="slider-group"><label>Synthesis Velocity</label><input type="range" class="cv" min="1" max="10" value="9"></div>
+        <div class="slider-group"><label>Focus Depth</label><input type="range" class="cv" min="1" max="10" value="8"></div>
+        <div class="slider-group"><label>Executive Power</label><input type="range" class="cv" min="1" max="10" value="4"></div>
+        <div class="slider-group"><label>Sensory Integration</label><input type="range" class="cv" min="1" max="10" value="5"></div>
     </div>
 
-    <!-- THE DYNAMIC CHARTER -->
-    <section class="manifesto-card" id="manifestoArea">
-        <h3>The Architectural Charter</h3>
-        <div id="charterText">Analyzing individual archetypes...</div>
-    </section>
-
-    <!-- TASK LEDGER -->
-    <section>
-        <h2>The Action Ledger</h2>
-        <div class="task-input">
-            <input type="text" id="tName" placeholder="Maneuver Description...">
-            <select id="tWeight">
-                <option value="1">Light (1 Spoon)</option>
-                <option value="3" selected>Standard (3 Spoons)</option>
-                <option value="5">Intensive (5 Spoons)</option>
-            </select>
-            <button class="btn" onclick="addTask()">Record Task</button>
+    <!-- RIGHT: VISUALIZATION & ACTION -->
+    <div class="panel" style="display: flex; flex-direction: column; align-items: center;">
+        <div class="hide-on-focus" style="width: 100%; height: 350px;">
+            <canvas id="radarMap"></canvas>
         </div>
-        <div id="taskList"></div>
-    </section>
 
-    <!-- SETTINGS EXPORT -->
-    <section style="text-align: center; border-top: 1px solid var(--border); padding-top: 30px;">
-        <p style="font-style: italic; color: var(--slate);">Harden your environment based on current Sensory levels.</p>
-        <button class="btn btn-gold" onclick="exportSettings()">Download Hardened settings.json</button>
-    </section>
+        <div style="width: 100%; margin-top: 40px;">
+            <h2>Action Ledger</h2>
+            <div class="task-input hide-on-focus">
+                <input type="text" id="tName" placeholder="Maneuver description...">
+                <select id="tEnergy">
+                    <option value="5">5 Spoons</option>
+                    <option value="15">15 Spoons</option>
+                    <option value="30">30 Spoons</option>
+                </select>
+                <button class="btn" style="grid-column: span 2;" onclick="addTask()">RECORD MANEUVER</button>
+            </div>
+
+            <div id="ledgerItems"></div>
+        </div>
+
+        <div class="hide-on-focus" style="margin-top: 40px; text-align: center;">
+            <button class="btn btn-gold" onclick="window.print()">PUBLISH MANUSCRIPT (PDF)</button>
+            <button class="btn btn-gold" style="margin-left: 10px;" onclick="exportSettings()">HARDEN IDE (.JSON)</button>
+        </div>
+    </div>
 </div>
 
 <script>
-    // --- Chart Logic ---
-    const ctx = document.getElementById('spikeMap').getContext('2d');
-    const labels = ['Synthesis', 'Focus', 'Creativity', 'Memory', 'Initiation', 'Switching', 'Sensory', 'Social'];
-    const initialData = [9, 8, 7, 6, 3, 4, 4, 5];
-
+    const ctx = document.getElementById('radarMap').getContext('2d');
     let chart = new Chart(ctx, {
         type: 'radar',
         data: {
-            labels: labels,
+            labels: ['Synthesis', 'Focus', 'Logic', 'Creativity', 'Initiation', 'Memory', 'Sensory', 'Social'],
             datasets: [{
-                data: initialData,
-                backgroundColor: 'rgba(184, 134, 11, 0.1)',
-                borderColor: '#1a1a1b',
-                pointBackgroundColor: '#722f37',
-                borderWidth: 1.5
+                data: [9, 8, 7, 6, 4, 5, 5, 4],
+                backgroundColor: 'rgba(102, 7, 8, 0.1)',
+                borderColor: '#660708',
+                borderWidth: 1.5,
+                pointBackgroundColor: '#9a8c73'
             }]
         },
-        options: {
-            scales: {
-                r: { 
-                    min: 0, max: 10, ticks: { display: false }, 
-                    grid: { color: '#d1cfb7' }, 
-                    pointLabels: { font: { family: "'Playfair Display'", size: 14, weight: 'bold' }, color: '#1a1a1b' } 
-                }
-            },
-            plugins: { legend: { display: false } }
-        }
+        options: { scales: { r: { min: 0, max: 10, ticks: { display: false } } }, plugins: { legend: false } }
     });
 
-    // Update listeners
-    const sliderIds = ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8'];
-    sliderIds.forEach((id, i) => {
-        document.getElementById(id).oninput = (e) => {
-            chart.data.datasets[0].data[i] = e.target.value;
-            chart.update();
-            updateCharter();
-        };
-    });
+    let tasks = [];
+    let coreTemp = 32;
 
-    // --- Dynamic Charter Logic ---
-    function updateCharter() {
+    function updateSystems() {
+        // 1. Calculate Load
+        const committed = tasks.reduce((s, t) => s + parseInt(t.energy), 0);
+        const noise = parseInt(document.getElementById('noise').value);
+        const fatigue = parseInt(document.getElementById('fatigue').value);
+        
+        // 2. Thermal Throttling Logic
+        coreTemp = 32 + (committed * 0.5) + (noise * 2) + (fatigue * 3);
+        
+        const mon = document.getElementById('sysMon');
+        mon.innerHTML = `
+            CORE_TEMP: ${coreTemp.toFixed(1)}°C ${coreTemp > 85 ? '(THROTTLING)' : '(STABLE)'}<br>
+            LOAD: ${committed} Spoons Committed<br>
+            ENV_NOISE_OFFSET: +${noise * 10}ms
+        `;
+
+        // 3. Archetype Engine
         const d = chart.data.datasets[0].data;
-        let text = "Based on the observed spiky profile, the subject requires the following environmental adaptations: <br><ul>";
-        
-        if (d[0] > 7) text += "<li><b>High Synthesis:</b> Prioritize cross-disciplinary research and non-linear problem solving.</li>";
-        if (d[1] > 7) text += "<li><b>Deep Focus:</b> Mandate 4-hour 'uninterrupted' cycles. Context switching is a critical threat.</li>";
-        if (d[4] < 5) text += "<li><b>Initiation Support:</b> Utilize 'Low-Friction' tools and body-doubling to bypass executive blocks.</li>";
-        if (d[6] < 5) text += "<li><b>Sensory Control:</b> Regulated illumination and auditory isolation are strictly required.</li>";
-        
-        text += "</ul>";
-        document.getElementById('charterText').innerHTML = text;
+        const badge = document.getElementById('archBadge');
+        if (d[0] > 7 && d[1] > 7) badge.innerText = "Archetype: THE ALCHEMIST (Deep Synthesis)";
+        else if (d[0] > 7 && d[4] < 4) badge.innerText = "Archetype: THE NON-LINEAR ARCHITECT";
+        else badge.innerText = "Archetype: THE ACADEMIC SCOUT";
+
+        // 4. UI Throttling
+        if (coreTemp > 90) document.getElementById('bodyRoot').classList.add('throttled');
+        else document.getElementById('bodyRoot').classList.remove('throttled');
     }
 
-    // --- Task Ledger ---
-    let tasks = [];
     function addTask() {
         const name = document.getElementById('tName').value;
-        const weight = parseInt(document.getElementById('tWeight').value);
+        const energy = document.getElementById('tEnergy').value;
         if(!name) return;
-        tasks.push({ id: Date.now(), name, weight, snoozes: 0 });
+        tasks.push({ id: Date.now(), name, energy, snoozes: 0 });
         document.getElementById('tName').value = "";
-        renderTasks();
+        renderLedger();
+        updateSystems();
     }
 
-    function snooze(id) {
-        const t = tasks.find(x => x.id === id);
-        t.snoozes++;
-        renderTasks();
+    function toggleFirewall(id) {
+        document.body.classList.toggle('firewall-active');
+        const task = tasks.find(t => t.id === id);
+        renderLedger();
     }
 
-    function resolve(id) {
-        tasks = tasks.filter(x => x.id !== id);
-        renderTasks();
-    }
-
-    function renderTasks() {
-        const container = document.getElementById('taskList');
+    function renderLedger() {
+        const container = document.getElementById('ledgerItems');
         container.innerHTML = "";
         tasks.forEach(t => {
             const div = document.createElement('div');
-            div.className = "task-row";
-            let triage = t.snoozes >= 3 ? `<div class="snooze-box"><b>Triage Note:</b> Rescheduling detected. Is this task causing a 'Wall of Awful'? Perhaps it's best to delete it and save your cognitive energy.</div>` : "";
-            
+            div.className = "task-item";
             div.innerHTML = `
                 <div style="flex:1;">
-                    <b style="font-size:1.2rem; font-family:'Playfair Display';">${t.name}</b> <small>(${t.weight} Spoons)</small>
-                    ${triage}
+                    <b style="font-size:1.1rem; font-family:'Playfair Display'">${t.name}</b> (${t.energy} Spoons)
                 </div>
                 <div>
-                    <button class="btn" style="background:transparent; color:var(--gold); border:1px solid var(--gold); margin-right:5px; box-shadow:none;" onclick="snooze(${t.id})">Snooze</button>
-                    <button class="btn" style="box-shadow:none;" onclick="resolve(${t.id})">Resolved</button>
+                    <button class="btn btn-gold" style="margin-right:5px;" onclick="toggleFirewall(${t.id})">FOCUS FIREWALL</button>
+                    <button class="btn" style="background:var(--slate);" onclick="tasks = tasks.filter(x => x.id !== ${t.id}); renderLedger(); updateSystems();">DONE</button>
                 </div>
             `;
             container.appendChild(div);
         });
     }
 
-    // --- Settings Export ---
     function exportSettings() {
-        const sensory = document.getElementById('v7').value;
-        const config = {
-            "editor.minimap.enabled": sensory < 5,
-            "editor.fontFamily": "EB Garamond",
-            "workbench.colorTheme": sensory > 7 ? "Deep Navy High Contrast" : "The Scholar's Ledger",
-            "editor.renderWhitespace": "none"
-        };
-        const blob = new Blob([JSON.stringify(config, null, 2)], {type: 'application/json'});
+        const sensory = chart.data.datasets[0].data[6];
+        const config = { "editor.minimap.enabled": sensory < 5, "workbench.colorTheme": "Dark Academia Hardened" };
+        const blob = new Blob([JSON.stringify(config, null, 2)], {type : 'application/json'});
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = 'hardened_settings.json'; a.click();
+        const a = document.createElement('a'); a.href = url; a.download = 'hardened_settings.json'; a.click();
     }
 
-    updateCharter();
+    document.querySelectorAll('input').forEach(i => i.oninput = updateSystems);
+    updateSystems();
 </script>
 </body>
     
