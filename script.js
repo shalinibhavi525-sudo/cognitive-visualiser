@@ -1,4 +1,4 @@
-const API_KEY = "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"; // Replace with your key
+const API_KEY = "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"; // Replace with your key
 
 let brainChart, stream, spoons = 10;
 let userProfile = JSON.parse(localStorage.getItem('steadyProfile')) || {
