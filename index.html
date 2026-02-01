@@ -6,89 +6,86 @@
     <title>Steady OS | The Scholar's Ledger</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-[#121212] text-[#F5F2E7] transition-all duration-1000 font-['Inter']">
+<body class="bg-[#0c0c0c] text-[#F5F2E7] font-['Inter']">
 
-    <!-- LOGIN: THE REGISTRY -->
-    <section id="view-login" class="flex items-center justify-center min-h-screen p-6 bg-[url('https://www.transparenttextures.com/patterns/dark-leather.png')]">
-        <div class="auth-card p-12 max-w-md w-full border border-[#C5A059]/30 bg-[#1a1a1a] shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-[#C5A059]"></div>
-            <h1 class="serif text-4xl mb-2 text-[#C5A059]">Steady OS</h1>
-            <p class="text-xs uppercase tracking-[0.2em] mb-10 opacity-60">The Scholar's Cognitive Bridge</p>
-            
-            <div class="space-y-6">
-                <div>
-                    <label class="text-[10px] uppercase tracking-widest block mb-2 opacity-50">Identifier</label>
-                    <input type="email" id="userEmail" placeholder="email@university.edu" class="auth-input">
-                </div>
-                <button onclick="handleLogin()" class="btn-elegant w-full">Open Ledger</button>
-            </div>
+    <!-- CAMERA OVERLAY (Hidden) -->
+    <div id="camera-modal" class="hidden fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-6 backdrop-blur-xl">
+        <div class="relative w-full max-w-lg border border-[#C5A059]/30 rounded-lg overflow-hidden">
+            <video id="webcam" autoplay playsinline class="w-full grayscale brightness-75"></video>
+            <div class="absolute inset-0 border-[40px] border-black/40 pointer-events-none"></div> <!-- Viewfinder -->
+        </div>
+        <div class="mt-8 flex gap-6">
+            <button onclick="captureSnapshot()" class="btn-elegant px-10">Capture Image</button>
+            <button onclick="closeCamera()" class="text-[9px] uppercase tracking-widest opacity-50">Cancel</button>
+        </div>
+        <canvas id="capture-canvas" class="hidden"></canvas>
+    </div>
+
+    <!-- LOGIN -->
+    <section id="view-login" class="flex items-center justify-center min-h-screen p-6">
+        <div class="auth-card p-12 max-w-md w-full border border-[#C5A059]/30 bg-[#161616] text-center shadow-2xl">
+            <h1 class="serif text-5xl mb-2 text-[#C5A059] tracking-tighter italic">Steady OS</h1>
+            <p class="text-[9px] uppercase tracking-[0.4em] mb-12 opacity-40">Cognitive Registry</p>
+            <input type="email" id="userEmail" placeholder="Identify yourself..." class="auth-input mb-8">
+            <button onclick="handleLogin()" class="btn-elegant w-full">Open Ledger</button>
         </div>
     </section>
 
-    <!-- ONBOARDING: THE COGNITIVE PRINT -->
-    <section id="view-onboarding" class="hidden min-h-screen p-12">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+    <!-- ONBOARDING (PDF BUTTON HERE) -->
+    <section id="view-onboarding" class="hidden min-h-screen p-12 lg:p-24 bg-[#0e0e0e]">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
             <div>
-                <h2 class="serif text-5xl mb-6 italic">The Spiky Profile</h2>
-                <p class="opacity-60 mb-12 text-lg leading-relaxed">Tune the architecture of your workspace. No labels, just the geometry of your mind.</p>
-                <div id="slider-root" class="space-y-10"></div>
-                <button onclick="saveAndGo()" class="mt-16 btn-elegant px-12">Finalize Environment</button>
+                <h2 class="serif text-6xl mb-8 italic text-[#C5A059]">The Neural Map.</h2>
+                <div id="slider-root" class="space-y-12"></div>
+                <div class="mt-20 flex flex-wrap gap-6">
+                    <button onclick="saveAndGo()" class="btn-elegant px-12">Enter Study</button>
+                    <button onclick="downloadPassport()" class="text-[9px] uppercase tracking-widest border border-[#C5A059]/20 px-8 py-4 hover:bg-[#C5A059]/10 transition">Download Passport (PDF)</button>
+                </div>
             </div>
-            <div class="p-10 border border-[#C5A059]/20 bg-[#161616] shadow-inner relative">
+            <div id="passport-preview" class="p-10 border border-[#C5A059]/10 bg-[#121212] shadow-2xl">
                 <canvas id="brainChart"></canvas>
             </div>
         </div>
     </section>
 
-    <!-- DASHBOARD: THE STUDY -->
+    <!-- DASHBOARD (CAMERA BUTTON HERE) -->
     <section id="view-dashboard" class="hidden min-h-screen p-8 lg:p-16">
-        <header class="max-w-7xl mx-auto flex justify-between items-end mb-20 border-b border-[#C5A059]/20 pb-8">
-            <div>
-                <h1 class="serif text-4xl mb-2">The Private Study</h1>
-                <div class="flex items-center gap-4">
-                    <span id="status-dot" class="w-2 h-2 rounded-full bg-[#C5A059] shadow-[0_0_8px_#C5A059]"></span>
-                    <p id="system-status" class="text-[10px] uppercase tracking-[0.2em] opacity-50">Focus Level: Nominal</p>
-                </div>
-            </div>
-            
-            <div class="flex items-center gap-10">
+        <header class="max-w-7xl mx-auto flex justify-between items-end mb-24 border-b border-[#C5A059]/10 pb-10">
+            <h1 class="serif text-5xl italic text-[#F5F2E7]/90">The Private Study</h1>
+            <div class="flex items-center gap-8">
                 <div class="text-right">
-                    <p class="text-[10px] uppercase tracking-widest opacity-40 mb-2">Energy Reserves</p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-48 h-[2px] bg-white/10 overflow-hidden">
-                            <div id="spoon-bar" class="bg-[#C5A059] h-full transition-all duration-700"></div>
-                        </div>
-                        <span id="spoon-count" class="serif text-xl italic text-[#C5A059]">10</span>
-                    </div>
+                    <p class="text-[9px] opacity-30 uppercase tracking-widest mb-1">Energy Budget</p>
+                    <span id="spoon-count" class="serif text-3xl italic text-[#C5A059]">10</span>
                 </div>
-                <button onclick="logout()" class="opacity-40 hover:opacity-100 transition"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3-3l-3-3m3 3l-3 3m3-3H9" /></svg></button>
+                <button onclick="logout()" class="opacity-20 hover:opacity-100 transition"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
         </header>
 
-        <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16">
-            <!-- TASKS: THE LEDGER -->
+        <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-20">
             <div class="lg:col-span-7">
-                <div class="flex gap-4 mb-12">
-                    <input type="text" id="taskInput" placeholder="Enter objective..." class="ledger-input">
-                    <button onclick="addTask()" class="btn-elegant whitespace-nowrap px-8">Commit</button>
-                </div>
-                <div id="taskList" class="space-y-6"></div>
+                <input type="text" id="taskInput" placeholder="Add an objective..." class="ledger-input italic text-2xl mb-12">
+                <div id="taskList" class="space-y-10"></div>
             </div>
 
-            <!-- TOOLS: THE COMPASS -->
-            <div class="lg:col-span-5 space-y-12">
-                <div class="tool-card p-8 border border-[#C5A059]/10 bg-[#161616]">
-                    <h3 class="serif text-xl mb-4 italic text-[#C5A059]">Instruction Decoder</h3>
-                    <textarea id="decoderInput" class="ledger-input h-32 text-sm mb-4" placeholder="Paste chaotic instructions..."></textarea>
-                    <button onclick="decode()" class="w-full py-3 text-[10px] uppercase tracking-widest border border-[#C5A059]/30 hover:bg-[#C5A059]/10 transition">Extract Logic</button>
-                    <div id="decoderOutput" class="hidden mt-6 p-4 bg-[#C5A059]/5 border-l-2 border-[#C5A059] italic text-sm text-[#C5A059]/80"></div>
-                </div>
-
-                <div class="p-6 border border-[#C5A059]/5 bg-[#161616]/50">
-                    <canvas id="miniChart" height="220"></canvas>
+            <div class="lg:col-span-5 space-y-16">
+                <div class="tool-card p-10 border border-[#C5A059]/5 bg-[#141414]">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="serif text-2xl italic text-[#C5A059]">The Lexicon</h3>
+                        <!-- CAMERA BUTTON -->
+                        <button onclick="openCamera()" class="p-2 border border-[#C5A059]/30 rounded-full hover:bg-[#C5A059]/10 transition">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" /><path d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" /></svg>
+                        </button>
+                    </div>
+                    <textarea id="decoderInput" class="ledger-input h-32 text-sm mb-6 bg-white/5 p-4 rounded-sm border-none" placeholder="Paste chaotic correspondence..."></textarea>
+                    <button onclick="decode()" class="w-full py-4 text-[9px] uppercase tracking-[0.4em] border border-[#C5A059]/20 hover:bg-[#C5A059] hover:text-[#121212] transition-all">Extract Essence</button>
+                    <div id="decoderOutput" class="hidden mt-8 p-6 bg-[#C5A059]/5 border-l border-[#C5A059]/30 italic text-sm text-[#C5A059]/90"></div>
                 </div>
             </div>
         </main>
