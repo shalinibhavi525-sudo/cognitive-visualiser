@@ -4,7 +4,7 @@
  */
 
 // --- 1. CONFIGURATION & STATE ---
-const GEMINI_API_KEY = "PASTE_YOUR_GEMINI_API_KEY_HERE"; // <--- PASTE KEY HERE
+const GEMINI_API_KEY = "AIzaSyCRlRoGDjfxp2wK0MT3eDHfS7SV0ZBO2JM"; // <--- PASTE KEY HERE
 
 let onboardingChart = null;
 let dashboardChart = null;
