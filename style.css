@@ -1,51 +1,105 @@
-.serif { font-family: 'Playfair Display', serif; }
+/* --- DARK ACADEMIA PALETTE --- */
+:root {
+    --gold: #C5A059;       /* Muted Brass */
+    --gold-dim: rgba(197, 160, 89, 0.2);
+    --ink: #0c0c0c;        /* Deep Black Ink */
+    --parchment: #F5F2E7;  /* Aged Paper */
+    --forest: #1b2621;     /* Deep Scholar Green */
+    --ivory: #EFEBE0;      /* Lighter Paper for Calm Mode */
+}
 
-/* INPUTS */
+/* --- FOUNDATION --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--ink);
+    color: var(--parchment);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: crosshair; /* Scholarly precision */
+}
+
+.serif {
+    font-family: 'Playfair Display', serif;
+}
+
+/* Subtle ink-on-paper grain overlay */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 50;
+}
+
+/* --- AUTH & CARDS --- */
+.auth-card, .tool-card {
+    background: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--gold-dim);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1), border-color 0.5s;
+}
+
+.auth-card:hover {
+    border-color: var(--gold);
+}
+
+/* --- INPUTS & TYPOGRAPHY --- */
 .auth-input, .ledger-input {
     width: 100%;
     background: transparent;
-    border-bottom: 1px solid rgba(197, 160, 89, 0.3);
-    padding: 0.75rem 0;
+    border: none;
+    border-bottom: 1px solid var(--gold-dim);
+    padding: 1rem 0;
     outline: none;
     transition: all 0.5s;
-    color: #F5F2E7;
+    color: var(--parchment);
 }
 
-.ledger-input:focus { border-bottom-color: #C5A059; }
+.ledger-input:focus {
+    border-bottom-color: var(--gold);
+}
 
-/* BUTTONS */
+::placeholder {
+    color: var(--parchment);
+    opacity: 0.2;
+    font-style: italic;
+}
+
+/* --- BUTTONS: THE ELEGANT TOUCH --- */
 .btn-elegant {
-    background: #C5A059;
-    color: #121212;
+    background: var(--gold);
+    color: var(--ink);
     font-size: 10px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
-    padding: 1.25rem;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    letter-spacing: 0.4em;
+    padding: 1.5rem;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
 }
 
 .btn-elegant:hover {
-    background: #e2c07d;
-    letter-spacing: 0.3em;
+    background: var(--parchment);
+    transform: translateY(-3px);
+    letter-spacing: 0.5em;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
 }
 
-/* SENSORY ADAPTATION (PARCHMENT MODE) */
-body.mode-calm {
-    background-color: #F5F2E7 !important;
-    color: #1B2621 !important;
-}
-
-body.mode-calm .auth-card, body.mode-calm .tool-card {
-    background: #fff !important;
-    border-color: rgba(0,0,0,0.1) !important;
-    color: #1B2621 !important;
-}
-
-body.mode-calm .ledger-input { color: #1B2621; border-bottom-color: rgba(0,0,0,0.1); }
-body.mode-calm .btn-elegant { background: #1B2621; color: #F5F2E7; }
-
-/* CUSTOM SLIDERS */
+/* --- CUSTOM RANGE SLIDERS --- */
 input[type=range] {
     -webkit-appearance: none;
     width: 100%;
@@ -57,7 +111,81 @@ input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
     height: 12px;
     width: 12px;
-    background: #C5A059;
+    background: var(--gold);
+    border: 1px solid var(--ink);
     cursor: pointer;
-    border-radius: 0;
+    border-radius: 0; /* Squared for a vintage look */
+}
+
+/* --- CAMERA VIEW FINDER --- */
+#camera-modal video {
+    filter: sepia(0.5) contrast(1.1) brightness(0.9);
+}
+
+/* --- ADAPTIVE MODES --- */
+
+/* CALM MODE: The Parchment Desk */
+body.mode-calm {
+    background-color: var(--ivory) !important;
+    color: #2c3333 !important;
+}
+
+body.mode-calm .auth-card, 
+body.mode-calm .tool-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    color: #2c3333 !important;
+}
+
+body.mode-calm .ledger-input, 
+body.mode-calm .auth-input {
+    color: #2c3333;
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+body.mode-calm .btn-elegant {
+    background: #2c3333;
+    color: var(--ivory);
+}
+
+body.mode-calm .serif {
+    color: #1a1a1a;
+}
+
+/* --- ANIMATIONS & UTILITIES --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+    animation: fadeIn 1.2s ease-out forwards;
+}
+
+.task-item {
+    border-left: 1px solid var(--gold-dim);
+    padding-left: 2rem;
+    position: relative;
+    transition: all 0.5s;
+}
+
+.task-item:hover {
+    border-left-color: var(--gold);
+}
+
+/* Custom Scrollbar for the Desk */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--ink);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gold-dim);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gold);
 }
