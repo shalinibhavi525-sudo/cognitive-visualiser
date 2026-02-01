@@ -1,61 +1,119 @@
-let brainChart, miniChart;
-let spoons = 10;
+// --- INITIALIZATION ---
+let brainChart;
+let stream;
 let userProfile = JSON.parse(localStorage.getItem('steadyProfile')) || {
     activation: 50, sensory: 50, logic: 50, time: 50
 };
 
-// --- AUTH SYSTEM ---
-function handleLogin() {
-    const email = document.getElementById('userEmail').value;
-    if (email) {
-        localStorage.setItem('steadyUser', email);
-        navTo('onboarding');
-    }
-}
-
-function logout() {
-    localStorage.clear();
-    location.reload();
-}
+window.onload = () => { if (localStorage.getItem('steadyUser')) navTo('dashboard'); }
 
 function navTo(screen) {
     document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
     document.getElementById(`view-${screen}`).classList.remove('hidden');
-    if (screen === 'onboarding' || screen === 'dashboard') initCharts();
-    if (screen === 'dashboard') applyAdaptiveUI();
+    if (screen === 'onboarding') initCharts();
 }
 
-// Check session on load
-window.onload = () => {
-    if (localStorage.getItem('steadyUser')) navTo('dashboard');
+// --- THE CAMERA LOGIC ---
+async function openCamera() {
+    document.getElementById('camera-modal').classList.remove('hidden');
+    const video = document.getElementById('webcam');
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        video.srcObject = stream;
+    } catch (err) {
+        alert("Camera access denied.");
+        closeCamera();
+    }
 }
 
-// --- ADAPTIVE ENGINE ---
+function closeCamera() {
+    if (stream) stream.getTracks().forEach(track => track.stop());
+    document.getElementById('camera-modal').classList.add('hidden');
+}
+
+function captureSnapshot() {
+    const video = document.getElementById('webcam');
+    const canvas = document.getElementById('capture-canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    
+    // Simulate OCR/AI Analysis
+    document.getElementById('decoderInput').value = "[Image Captured: Scanning for directive logic...]";
+    closeCamera();
+    decode(); // Trigger the decode logic immediately
+}
+
+// --- PDF GENERATION (THE PASSPORT) ---
+async function downloadPassport() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Convert Chart Canvas to Image
+    const chartCanvas = document.getElementById('brainChart');
+    const chartImg = chartCanvas.toDataURL("image/png");
+
+    // Styling the PDF
+    doc.setFillColor(245, 242, 231); // Parchment background
+    doc.rect(0, 0, 210, 297, 'F');
+    
+    doc.setTextColor(27, 38, 33);
+    doc.setFont("times", "italic");
+    doc.setFontSize(28);
+    doc.text("Cognitive Passport", 105, 40, { align: "center" });
+
+    doc.setDrawColor(197, 160, 89);
+    doc.line(40, 45, 170, 45);
+
+    // Add Chart
+    doc.addImage(chartImg, 'PNG', 55, 60, 100, 100);
+
+    // Generate Dynamic Description based on "Spikes"
+    doc.setFontSize(12);
+    doc.setFont("times", "normal");
+    
+    let description = "Official Neural Analysis Profile:\n\n";
+    if (userProfile.sensory > 70) description += "- High Sensory Permeability: Requires low-stimulus environments to avoid cognitive saturation.\n";
+    if (userProfile.activation < 40) description += "- Activation Inertia: Significant threshold between intention and task initiation. Granular scaffolding recommended.\n";
+    if (userProfile.logic > 60) description += "- Explicit Logic Preference: Thrives in objective, rule-based systems; social ambiguity acts as a cognitive friction.\n";
+    if (userProfile.time > 50) description += "- Non-Linear Temporal Perception: Views time as an energy volume rather than a chronological sequence.\n";
+
+    const splitText = doc.splitTextToSize(description, 150);
+    doc.text(splitText, 30, 180);
+
+    doc.setFontSize(10);
+    doc.text("Steady OS // MIT Behavioral Engineering Prototype", 105, 270, { align: "center" });
+
+    doc.save("Cognitive_Passport.pdf");
+}
+
+// --- DASHBOARD FUNCTIONS ---
+function decode() {
+    const output = document.getElementById('decoderOutput');
+    output.classList.remove('hidden');
+    output.innerText = "Extracting objective directives...";
+    setTimeout(() => {
+        output.innerHTML = `
+            <p class="uppercase text-[9px] tracking-widest font-bold mb-4">Essence Extracted:</p>
+            <ul class="space-y-2">
+                <li>• Strip social expectations.</li>
+                <li>• Focus exclusively on the technical deliverable.</li>
+                <li>• Complete by tonight's sunset.</li>
+            </ul>`;
+    }, 1200);
+}
+
+// --- SHARED UI LOGIC (Spider Web) ---
 function initCharts() {
-    const config = (data) => ({
-        type: 'radar',
-        data: {
-            labels: ['Activation', 'Sensory', 'Logic', 'Time'],
-            datasets: [{
-                data: data,
-                backgroundColor: 'rgba(197, 160, 89, 0.1)',
-                borderColor: '#C5A059',
-                borderWidth: 1,
-                pointRadius: 2
-            }]
-        },
-        options: {
-            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(197, 160, 89, 0.1)' }, angleLines: { color: 'rgba(197, 160, 89, 0.1)' } } },
-            plugins: { legend: { display: false } }
-        }
-    });
+    const ctx = document.getElementById('brainChart').getContext('2d');
+    if (brainChart) brainChart.destroy();
 
     const root = document.getElementById('slider-root');
     if (root && !root.innerHTML) {
         Object.keys(userProfile).forEach(t => {
             root.innerHTML += `
                 <div class="space-y-4">
-                    <label class="flex justify-between text-[10px] uppercase tracking-widest opacity-50">
+                    <label class="flex justify-between text-[10px] uppercase tracking-widest opacity-40">
                         ${t} <span class="text-[#C5A059] font-bold">${userProfile[t]}%</span>
                     </label>
                     <input type="range" value="${userProfile[t]}" oninput="updateTrait('${t}', this.value)">
@@ -63,17 +121,33 @@ function initCharts() {
         });
     }
 
-    const bCtx = document.getElementById('brainChart')?.getContext('2d');
-    if (bCtx) brainChart = new Chart(bCtx, config(Object.values(userProfile)));
-
-    const mCtx = document.getElementById('miniChart')?.getContext('2d');
-    if (mCtx) miniChart = new Chart(mCtx, config(Object.values(userProfile)));
+    brainChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Activation', 'Sensory', 'Logic', 'Time'],
+            datasets: [{
+                data: Object.values(userProfile),
+                backgroundColor: 'rgba(197, 160, 89, 0.1)',
+                borderColor: '#C5A059',
+                borderWidth: 1,
+                pointRadius: 2
+            }]
+        },
+        options: {
+            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(197, 160, 89, 0.1)' } } },
+            plugins: { legend: { display: false } }
+        }
+    });
 }
 
 function updateTrait(trait, val) {
     userProfile[trait] = parseInt(val);
     initCharts();
-    applyAdaptiveUI();
+}
+
+function handleLogin() {
+    localStorage.setItem('steadyUser', document.getElementById('userEmail').value);
+    navTo('onboarding');
 }
 
 function saveAndGo() {
@@ -81,70 +155,4 @@ function saveAndGo() {
     navTo('dashboard');
 }
 
-function applyAdaptiveUI() {
-    // Sensory Check: Toggle Calm Mode
-    if (userProfile.sensory > 70) document.body.classList.add('mode-calm');
-    else document.body.classList.remove('mode-calm');
-
-    const status = document.getElementById('system-status');
-    if (userProfile.activation < 40) status.innerText = "Assisted Mode Active";
-}
-
-// --- THE LEDGER (TASK EXPLODER) ---
-function addTask() {
-    const input = document.getElementById('taskInput');
-    const list = document.getElementById('taskList');
-    if (!input.value || spoons < 2) return;
-
-    spoons -= 2;
-    updateSpoons();
-
-    const taskDiv = document.createElement('div');
-    taskDiv.className = "p-8 border border-[#C5A059]/10 bg-[#161616] relative group";
-    
-    let subtasks = "";
-    if (userProfile.activation < 50) {
-        subtasks = `
-            <div class="mt-6 pt-6 border-t border-[#C5A059]/10 space-y-4 opacity-60">
-                <p class="text-[9px] uppercase tracking-widest text-[#C5A059]">Micro-Directives</p>
-                <div class="flex items-center gap-3 text-xs"><input type="checkbox"> Settle in environment</div>
-                <div class="flex items-center gap-3 text-xs"><input type="checkbox"> Engage for three minutes</div>
-            </div>`;
-    }
-
-    taskDiv.innerHTML = `
-        <div class="flex justify-between items-start">
-            <h4 class="serif text-2xl italic">${input.value}</h4>
-            <button onclick="this.parentElement.parentElement.remove(); gainSpoon();" class="text-[9px] uppercase tracking-widest text-[#C5A059] border border-[#C5A059]/30 px-4 py-2 hover:bg-[#C5A059] hover:text-[#121212] transition">Fulfill</button>
-        </div>
-        ${subtasks}
-    `;
-    list.prepend(taskDiv);
-    input.value = "";
-}
-
-function updateSpoons() {
-    document.getElementById('spoon-bar').style.width = (spoons * 10) + "%";
-    document.getElementById('spoon-count').innerText = spoons;
-}
-
-function gainSpoon() { if(spoons < 10) spoons += 1; updateSpoons(); }
-
-// --- DECODER ---
-function decode() {
-    const input = document.getElementById('decoderInput').value;
-    const output = document.getElementById('decoderOutput');
-    if (!input) return;
-
-    output.classList.remove('hidden');
-    output.innerHTML = "Processing logic...";
-
-    setTimeout(() => {
-        const points = input.split(/[.!?]/).filter(s => s.length > 10);
-        output.innerHTML = `
-            <p class="mb-2 uppercase text-[9px] tracking-widest font-bold">Objectives:</p>
-            <ul class="list-disc ml-4 space-y-2">
-                ${points.map(p => `<li>${p.trim()}</li>`).join('')}
-            </ul>`;
-    }, 800);
-}
+function logout() { localStorage.clear(); location.reload(); }
