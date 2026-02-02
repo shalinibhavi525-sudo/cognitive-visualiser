@@ -15,13 +15,11 @@
 </head>
 <body class="bg-[#0c0c0c] text-[#F5F2E7] font-['Inter']">
 
-    <!-- VIEW: LOGIN -->
     <section id="view-login" class="flex items-center justify-center min-h-screen p-6">
         <div class="auth-card p-12 max-w-md w-full border border-[#C5A059]/30 text-center bg-[#161616] shadow-2xl">
             <h1 class="serif text-5xl mb-2 text-[#C5A059] italic">Steady OS</h1>
             <p class="text-[9px] uppercase tracking-[0.4em] mb-12 opacity-40">Cognitive Registry</p>
-            
-            <!-- THE BUTTON -->
+
             <button type="button" onclick="handleLogin()" class="w-full flex items-center justify-center gap-4 bg-white text-black py-4 rounded-sm font-bold text-xs uppercase tracking-widest hover:bg-[#F5F2E7] transition">
                 <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-5 h-5"> 
                 Sign in with Google
@@ -29,7 +27,6 @@
         </div>
     </section>
 
-    <!-- VIEW: ONBOARDING (Neural Map) -->
     <section id="view-onboarding" class="hidden min-h-screen p-12 lg:p-24 bg-[#0e0e0e]">
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div>
@@ -48,19 +45,18 @@
         </div>
     </section>
 
-    <!-- VIEW: DASHBOARD -->
     <section id="view-dashboard" class="hidden min-h-screen p-8 lg:p-12">
         <header class="max-w-7xl mx-auto flex justify-between border-b border-[#C5A059]/10 pb-8 mb-12">
             <h1 class="serif text-4xl italic">The Study</h1>
             <button onclick="logout()" class="text-[10px] opacity-20 hover:opacity-100 uppercase">Logout</button>
         </header>
         <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
-            <!-- SIDEBAR -->
+
             <div class="lg:col-span-3 space-y-8 border-r border-[#C5A059]/10 pr-8">
                 <canvas id="dashboardChart"></canvas>
                 <div id="dashboard-sliders" class="space-y-6"></div>
             </div>
-            <!-- TASKS -->
+
             <div class="lg:col-span-9 space-y-10">
                 <div class="flex gap-4">
                     <input type="text" id="taskInput" placeholder="Objective..." class="ledger-input italic text-3xl flex-1">
