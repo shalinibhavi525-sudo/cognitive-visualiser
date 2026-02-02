@@ -1,13 +1,11 @@
-/* --- THE SCHOLAR'S PALETTE --- */
 :root {
-    --gold: #C5A059;       /* Aged Brass */
+    --gold: #C5A059;      
     --gold-dim: rgba(197, 160, 89, 0.2);
-    --ink: #0c0c0c;        /* Deep Fountain Pen Ink */
-    --parchment: #F5F2E7;  /* Aged Paper */
+    --ink: #0c0c0c;       
+    --parchment: #F5F2E7; 
     --glass: rgba(20, 20, 20, 0.7);
 }
 
-/* --- FOUNDATION --- */
 * {
     margin: 0;
     padding: 0;
@@ -26,8 +24,6 @@ body {
 .serif {
     font-family: 'Playfair Display', serif;
 }
-
-/* Texture Overlay (Makes the site feel like leather/paper) */
 body::after {
     content: "";
     position: fixed;
@@ -41,7 +37,6 @@ body::after {
     z-index: 99;
 }
 
-/* --- THE REGISTRY (LOGIN) --- */
 .auth-card {
     background: var(--glass);
     backdrop-filter: blur(20px);
@@ -50,7 +45,6 @@ body::after {
     border-radius: 2px;
 }
 
-/* --- THE LEDGER (TASKS) --- */
 .ledger-input {
     width: 100%;
     background: transparent;
@@ -72,7 +66,6 @@ body::after {
     font-style: italic;
 }
 
-/* --- BUTTONS --- */
 .btn-elegant {
     background: var(--gold);
     color: var(--ink);
@@ -92,7 +85,6 @@ body::after {
     box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
-/* --- CUSTOM RANGE SLIDERS --- */
 input[type=range] {
     -webkit-appearance: none;
     width: 100%;
@@ -110,13 +102,11 @@ input[type=range]::-webkit-slider-thumb {
     border-radius: 0;
 }
 
-/* --- CAMERA LENS --- */
 #webcam {
     filter: sepia(0.3) contrast(1.1) brightness(0.8);
     transform: scaleX(-1); /* Mirror effect */
 }
 
-/* --- SENSORY ADAPTATION (MODE: CALM) --- */
 body.mode-calm {
     background-color: #EFEBE0 !important;
     color: #1B2621 !important;
@@ -143,7 +133,6 @@ body.mode-calm .serif {
     color: #1a1a1a;
 }
 
-/* --- OBSERVABILITY: THE WARNING PULSE --- */
 @keyframes nudge-alert {
     0%, 100% { border-color: rgba(197, 160, 89, 0.1); }
     50% { border-color: #ff4d4d; border-width: 2px; }
@@ -153,7 +142,6 @@ body.mode-calm .serif {
     animation: nudge-alert 2s infinite;
 }
 
-/* --- ANIMATIONS --- */
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }
@@ -163,7 +151,6 @@ body.mode-calm .serif {
     animation: fadeInUp 0.7s ease-out forwards;
 }
 
-/* Utilities */
 .hidden {
     display: none !important;
 }
