@@ -1,17 +1,12 @@
-/**
- * STEADY OS - FINAL MASTER SCRIPT
- * Behavioral Engineering Prototype
- */
 
-// --- 1. CONFIGURATION & STATE ---
-const GEMINI_API_KEY = "AIzaSyCRlRoGDjfxp2wK0MT3eDHfS7SV0ZBO2JM"; // <--- PASTE KEY HERE
+const GEMINI_API_KEY = "AIzaSyCRlRoGDjfxp2wK0MT3eDHfS7SV0ZBO2JM"; 
 
 let onboardingChart = null;
 let dashboardChart = null;
 let stream = null;
 let spoons = 10;
 
-// Default traits (Cognitive Profile)
+
 let userProfile = JSON.parse(localStorage.getItem('steadyProfile')) || {
     "YOUR Activation Threshold": 50,
     "YOUR Sensory Sensitivity": 50,
@@ -20,28 +15,25 @@ let userProfile = JSON.parse(localStorage.getItem('steadyProfile')) || {
     "YOUR Execution Load": 50
 };
 
-// --- 2. INITIALIZATION & NAVIGATION ---
 window.onload = () => {
     console.log("Steady OS: Systems Online.");
-    // Persistence: If user is already logged in
+
     if (localStorage.getItem('steadyUser')) {
         navTo('dashboard');
     }
 };
 
 function navTo(screenId) {
-    // Hide all views
+    
     const views = ['view-login', 'view-onboarding', 'view-dashboard'];
     views.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
     });
 
-    // Show target view
     const target = document.getElementById(`view-${screenId}`);
     if (target) target.classList.remove('hidden');
 
-    // Run UI Updates after a tiny delay so the DOM is ready
     setTimeout(() => {
         initCharts();
         applyAdaptiveUI();
@@ -64,13 +56,12 @@ function saveAndGo() {
     navTo('dashboard');
 }
 
-// --- 3. THE BRAIN (GEMINI AI INTEGRATION) ---
 async function askAI(prompt) {
     if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("PASTE")) {
         return "System Error: API Key missing from the ledger.";
     }
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     try {
         const response = await fetch(url, {
@@ -94,7 +85,6 @@ async function askAI(prompt) {
     }
 }
 
-// --- 4. SENSORY LOGIC & CHARTS ---
 function initCharts() {
     const config = (data) => ({
         type: 'radar',
@@ -114,7 +104,6 @@ function initCharts() {
         }
     });
 
-    // Inject Sliders to containers
     const containers = [document.getElementById('onboarding-sliders'), document.getElementById('dashboard-sliders')];
     containers.forEach(container => {
         if (container && container.innerHTML === "") {
@@ -130,7 +119,6 @@ function initCharts() {
         }
     });
 
-    // Handle Charts
     const oCtx = document.getElementById('onboardingChart');
     if (oCtx) {
         if (onboardingChart) onboardingChart.destroy();
@@ -147,10 +135,8 @@ function initCharts() {
 function updateTrait(trait, val) {
     userProfile[trait] = parseInt(val);
     
-    // Sync UI Labels
     document.querySelectorAll(`[id="val-${trait}"]`).forEach(l => l.innerText = val + "%");
     
-    // Sync Charts
     if (onboardingChart) {
         onboardingChart.data.datasets[0].data = Object.values(userProfile);
         onboardingChart.update();
@@ -163,7 +149,6 @@ function updateTrait(trait, val) {
     applyAdaptiveUI();
     localStorage.setItem('steadyProfile', JSON.stringify(userProfile));
 
-    // Update AI Description on onboarding
     const descBox = document.getElementById('onboarding-desc');
     if (descBox) {
         clearTimeout(window.aiTimer);
@@ -184,7 +169,6 @@ function applyAdaptiveUI() {
     }
 }
 
-// --- 5. THE LEDGER (SMART TASK SYSTEM) ---
 async function addTask() {
     const input = document.getElementById('taskInput');
     const time = document.getElementById('timeInput');
@@ -198,7 +182,6 @@ async function addTask() {
     taskDiv.innerHTML = `<p class="serif italic opacity-30 text-2xl">Analyzing objective structure...</p>`;
     list.prepend(taskDiv);
 
-    // AI Step Generation
     const steps = await askAI(`Break down: "${input.value}" into 3 actionable steps. Time: ${time.value} ${unit}.`);
     
     taskDiv.innerHTML = `
@@ -216,7 +199,6 @@ async function addTask() {
         <div class="chunk-area mt-4 space-y-4"></div>
     `;
 
-    // Time-based Observability (Warning)
     let ms = time.value * 60000;
     if (unit === 'hours') ms *= 60;
     if (unit === 'days') ms *= 1440;
@@ -240,7 +222,6 @@ async function chunkTask(btn, title, time, unit) {
     area.innerHTML = `<div class="bg-[#C5A059]/5 p-4 border border-[#C5A059]/10 italic text-sm opacity-80">${res.replace(/\n/g, '<br>')}</div>`;
 }
 
-// --- 6. THE LEXICON & CAMERA ---
 async function openCamera() {
     document.getElementById('camera-modal').classList.remove('hidden');
     try {
@@ -271,7 +252,6 @@ async function decode() {
     out.innerHTML = `<span class="text-[10px] uppercase font-bold block mb-4 text-[#C5A059]">The Synthesis:</span>${res.replace(/\n/g, '<br>')}`;
 }
 
-// --- 7. UTILITIES ---
 function updateSpoons() {
     const bar = document.getElementById('spoon-bar');
     if (bar) bar.style.width = (spoons * 10) + "%";
@@ -285,7 +265,7 @@ function gainSpoon() {
 }
 
 function downloadPassport() {
-    // Basic implementation of PDF Export using jsPDF
+    
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     doc.text("Cognitive Passport", 20, 20);
